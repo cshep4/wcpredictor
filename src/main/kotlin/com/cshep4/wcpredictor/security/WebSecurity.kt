@@ -35,16 +35,12 @@ class WebSecurity : WebSecurityConfigurerAdapter() {
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(POST, SIGN_UP_URL).permitAll()
                 .antMatchers(PUT, FIXTURES_UPDATE_URL).permitAll()
-                //.and()
-                //.authorizeRequests().antMatchers("/console/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(JWTAuthenticationFilter(authenticationManager()))
                 .addFilter(JWTAuthorisationFilter(authenticationManager(),usedTokenService))
                 // this disables session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
-//        http.headers().frameOptions().disable()
     }
 
     @Throws(Exception::class)
