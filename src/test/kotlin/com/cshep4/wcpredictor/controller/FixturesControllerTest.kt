@@ -65,5 +65,27 @@ internal class FixturesControllerTest {
         assertThat(result.body, Is(nullValue()))
     }
 
+    @Test
+    fun `'getAllPredictedMatches' should return a list of matches with users predictions and status OK if some are found`() {
+        val matches = listOf(Match())
+
+        whenever(fixturesService.retrieveAllMatchesWithPredictions(1)).thenReturn(matches)
+
+        val result = fixturesController.getAllPredictedMatches(1)
+
+        assertThat(result.statusCode, Is(OK))
+        assertThat(result.body, Is(matches))
+    }
+
+    @Test
+    fun `'getAllPredictedMatches' should return a NOT FOUND if no matches are found`() {
+        whenever(fixturesService.retrieveAllMatchesWithPredictions(1)).thenReturn(emptyList())
+
+        val result = fixturesController.getAllPredictedMatches(1)
+
+        assertThat(result.statusCode, Is(NOT_FOUND))
+        assertThat(result.body, Is(nullValue()))
+    }
+
 
 }

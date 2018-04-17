@@ -1,5 +1,6 @@
 package com.cshep4.wcpredictor.config
 
+import com.cshep4.wcpredictor.constant.SecurityConstants.HEADER_STRING
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -26,6 +27,7 @@ class AppConfig {
         config.addAllowedHeader("Content-Type")
         config.addAllowedHeader("x-xsrf-token")
         config.addAllowedHeader("Authorization")
+        config.addAllowedHeader(HEADER_STRING)
         config.addAllowedHeader("Origin")
         config.addAllowedHeader("Accept")
         config.addAllowedHeader("X-Requested-With")
@@ -36,6 +38,7 @@ class AppConfig {
         config.addAllowedMethod("PUT")
         config.addAllowedMethod("POST")
         config.addAllowedMethod("DELETE")
+        config.addExposedHeader(HEADER_STRING)
         source.registerCorsConfiguration("/**", config)
 
         return CorsFilter(source)

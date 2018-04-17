@@ -9,7 +9,12 @@ data class Match (
         var hGoals: Int? = null,
         var aGoals: Int? = null,
         var played: Int = 0,
-        var matchGroup: Char? = null,
+        var group: Char? = null,
         var dateTime: LocalDateTime? = null,
         var matchday: Int = 0
-)
+) {
+    fun updateScoreline(hGoals: Int?, aGoals: Int?){
+        this.hGoals = hGoals
+        this.aGoals = aGoals
+    }
+}

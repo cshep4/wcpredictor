@@ -15,7 +15,8 @@ data class MatchEntity (
         var hGoals: Int? = null,
         var aGoals: Int? = null,
         var played: Int = 0,
-        var matchGroup: Char? = null,
+        @Column(name = "matchGroup")
+        var group: Char? = null,
         var dateTime: LocalDateTime? = null,
         var matchday: Int = 0
 ){
@@ -26,7 +27,7 @@ data class MatchEntity (
             hGoals = this.hGoals,
             aGoals = this.aGoals,
             played = this.played,
-            matchGroup = this.matchGroup,
+            group = this.group,
             dateTime = this.dateTime,
             matchday = this.matchday)
 
@@ -38,7 +39,7 @@ data class MatchEntity (
                 hGoals = dto.hGoals,
                 aGoals = dto.aGoals,
                 played = dto.played,
-                matchGroup = dto.matchGroup,
+                group = dto.group,
                 dateTime = dto.dateTime,
                 matchday = dto.matchday)
     }

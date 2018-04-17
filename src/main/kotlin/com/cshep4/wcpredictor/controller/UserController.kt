@@ -33,4 +33,9 @@ class UserController {
             else -> ResponseEntity.status(OK).body(user)
         }
     }
+
+    @PostMapping("/logout")
+    fun logout() : ResponseEntity<User> {
+        return ResponseEntity.ok().build()
+    }
 }

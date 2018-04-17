@@ -46,7 +46,7 @@ data class Fixture(val _links: ResultLinks? = null,
             hGoals = this.result?.goalsHomeTeam,
             aGoals = this.result?.goalsAwayTeam,
             played = getPlayed(),
-            matchGroup = getGroup(),
+            group = getGroup(),
             dateTime = LocalDateTime.parse(this.date, DateTimeFormatter.ISO_DATE_TIME),
             matchday = this.matchday)
 

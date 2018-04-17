@@ -1,6 +1,7 @@
 package com.cshep4.wcpredictor.security
 
 import com.cshep4.wcpredictor.constant.SecurityConstants.HEADER_STRING
+import com.cshep4.wcpredictor.constant.SecurityConstants.LOGOUT_URL
 import com.cshep4.wcpredictor.constant.SecurityConstants.SECRET
 import com.cshep4.wcpredictor.constant.SecurityConstants.TOKEN_PREFIX
 import com.cshep4.wcpredictor.extension.generateJwtToken
@@ -25,7 +26,6 @@ class JWTAuthorisationFilter(authManager: AuthenticationManager, private val use
         val header = req.getHeader(HEADER_STRING)
 
         if (header == null || !header.startsWith(TOKEN_PREFIX)) {
-//            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Denied");
             chain.doFilter(req, res)
             return
         }
@@ -34,7 +34,9 @@ class JWTAuthorisationFilter(authManager: AuthenticationManager, private val use
 
         if (authentication != null) {
             usedTokenService.addUsedToken(header)
-            res.generateJwtToken(authentication.principal.toString())
+            if (req.requestURI != LOGOUT_URL) {
+                res.generateJwtToken(authentication.principal.toString())
+            }
         }
 
         SecurityContextHolder.getContext().authentication = authentication

@@ -1,4 +1,4 @@
-package com.cshep4.wcpredictor.service.fixtures
+package com.cshep4.wcpredictor.component.fixtures
 
 import com.cshep4.wcpredictor.data.api.Fixture
 import com.cshep4.wcpredictor.data.api.FixturesApiResult
@@ -8,8 +8,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import org.hamcrest.CoreMatchers.`is` as Is
 
-internal class FormatFixturesServiceTest {
-    private val formatFixturesService = FormatFixturesService()
+internal class FixtureFormatterTest {
+    private val fixtureFormatter = FixtureFormatter()
 
     @Test
     fun `'format' returns list of matches`() {
@@ -17,7 +17,7 @@ internal class FormatFixturesServiceTest {
 
         val apiResult = FixturesApiResult(fixtures = arrayOf(match,match,match,match))
 
-        val result = formatFixturesService.format(apiResult)
+        val result = fixtureFormatter.format(apiResult)
 
         val expectedDateTime = LocalDateTime.parse(match.date, DateTimeFormatter.ISO_DATE_TIME)
 
@@ -40,7 +40,7 @@ internal class FormatFixturesServiceTest {
     fun `'format' returns empty list if no fixtures`() {
         val apiResult = FixturesApiResult(fixtures = emptyArray())
 
-        val result = formatFixturesService.format(apiResult)
+        val result = fixtureFormatter.format(apiResult)
 
         assertThat(result.isEmpty(), Is(true))
     }

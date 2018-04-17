@@ -1,6 +1,10 @@
 package com.cshep4.wcpredictor.constant
 
 object TeamGroups {
+    const val NUMBER_OF_TEAMS = 32
+    const val NUMBER_OF_GROUPS = 8
+    const val NUMBER_OF_TEAMS_PER_GROUP = 4
+
     val groupMap = mapOf(
             "Russia" to 'A',
             "Saudi Arabia" to 'A',

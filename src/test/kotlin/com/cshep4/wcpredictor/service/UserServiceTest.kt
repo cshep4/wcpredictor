@@ -60,7 +60,7 @@ internal class UserServiceTest {
         val result = userService.createUser(user)
 
         assertThat(result, Is(nullValue()))
-        verify(userRepository, times(0)).save(user.email!!, user.password!!)
+        verify(userRepository, times(0)).save(user.email, user.password)
     }
 
     @Test
@@ -70,7 +70,7 @@ internal class UserServiceTest {
         val result = userService.createUser(user)
 
         assertThat(result, Is(nullValue()))
-        verify(userRepository, times(0)).save(user.email!!, user.password!!)
+        verify(userRepository, times(0)).save(user.email, user.password)
     }
 
     @Test
@@ -80,7 +80,7 @@ internal class UserServiceTest {
         val result = userService.createUser(user)
 
         assertThat(result, Is(nullValue()))
-        verify(userRepository, times(0)).save(user.email!!, user.password!!)
+        verify(userRepository, times(0)).save(user.email, user.password)
     }
 
     @Test
@@ -90,7 +90,7 @@ internal class UserServiceTest {
         val result = userService.createUser(user)
 
         assertThat(result, Is(nullValue()))
-        verify(userRepository, times(0)).save(user.email!!, user.password!!)
+        verify(userRepository, times(0)).save(user.email, user.password)
     }
 
     @Test
@@ -100,7 +100,7 @@ internal class UserServiceTest {
         val result = userService.createUser(user)
 
         assertThat(result, Is(nullValue()))
-        verify(userRepository, times(0)).save(user.email!!, user.password!!)
+        verify(userRepository, times(0)).save(user.email, user.password)
     }
 
     @Test
@@ -112,7 +112,7 @@ internal class UserServiceTest {
         val result = userService.createUser(user)
 
         assertThat(result, Is(nullValue()))
-        verify(userRepository, times(0)).save(user.email!!, user.password!!)
+        verify(userRepository, times(0)).save(user.email, user.password)
     }
 
     @Test

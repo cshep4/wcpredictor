@@ -64,4 +64,12 @@ internal class UserControllerTest {
         assertThat(result.statusCode, Is(NOT_FOUND))
         assertThat(result.body, Is(nullValue()))
     }
+
+    @Test
+    fun `'logout' returns OK`() {
+        val result = userController.logout()
+
+        assertThat(result.statusCode, Is(OK))
+        assertThat(result.body, Is(nullValue()))
+    }
 }
