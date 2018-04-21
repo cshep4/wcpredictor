@@ -34,6 +34,16 @@ class UserController {
         }
     }
 
+    @GetMapping("/email/{email}")
+    fun getUserByEmail(@PathVariable(value = "email") email: String) : ResponseEntity<User> {
+        val user = userService.retrieveUserByEmail(email)
+
+        return when (user) {
+            null -> ResponseEntity.status(NOT_FOUND).build()
+            else -> ResponseEntity.status(OK).body(user)
+        }
+    }
+
     @PostMapping("/logout")
     fun logout() : ResponseEntity<User> {
         return ResponseEntity.ok().build()

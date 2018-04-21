@@ -141,13 +141,14 @@ internal class FixturesServiceTest {
                 MatchEntity(id = 2))
 
         val matches = matchEntities.map { it.toDto() }
+        val predictedMatches = matches.map { it.toPredictedMatch() }
 
         val predictions = listOf(Prediction(matchId = 1, hGoals = 2, aGoals = 3),
                 Prediction(matchId = 2, hGoals = 1, aGoals = 0))
 
         whenever(fixturesRepository.findAll()).thenReturn(matchEntities)
         whenever(predictionsService.retrievePredictionsByUserId(1)).thenReturn(predictions)
-        whenever(predictionMerger.merge(matches, predictions)).thenReturn(matches)
+        whenever(predictionMerger.merge(matches, predictions)).thenReturn(predictedMatches)
 
         val result = fixturesService.retrieveAllMatchesWithPredictions(1)
 
@@ -155,14 +156,5 @@ internal class FixturesServiceTest {
         assertThat(result[0].id, Is(1L))
         assertThat(result[1].id, Is(2L))
 
-    }
-
-    @Test
-    fun `'retrieveAllMatchesWithPredictions' should return empty list if no matches exist`() {
-        whenever(fixturesRepository.findPredictedMatchesByUserId(1)).thenReturn(emptyList())
-
-        val result = fixturesService.retrieveAllMatchesWithPredictions(1)
-
-        assertThat(result.isEmpty(), Is(true))
     }
 }

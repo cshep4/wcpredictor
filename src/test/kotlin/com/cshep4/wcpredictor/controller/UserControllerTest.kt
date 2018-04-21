@@ -66,6 +66,26 @@ internal class UserControllerTest {
     }
 
     @Test
+    fun `'getUserByEmail' returns user info in the request body when user is found with email`() {
+        whenever(userService.retrieveUserByEmail("test")).thenReturn(user)
+
+        val result = userController.getUserByEmail("test")
+
+        assertThat(result.statusCode, Is(OK))
+        assertThat(result.body, Is(user))
+    }
+
+    @Test
+    fun `'getUserByEmail' returns NOT_FOUND when no user is found`() {
+        whenever(userService.retrieveUserByEmail("test")).thenReturn(null)
+
+        val result = userController.getUserByEmail("test")
+
+        assertThat(result.statusCode, Is(NOT_FOUND))
+        assertThat(result.body, Is(nullValue()))
+    }
+
+    @Test
     fun `'logout' returns OK`() {
         val result = userController.logout()
 

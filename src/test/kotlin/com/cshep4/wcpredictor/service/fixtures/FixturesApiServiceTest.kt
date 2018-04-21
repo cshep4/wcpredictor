@@ -19,11 +19,4 @@ internal class FixturesApiServiceTest {
         assertThat(fixturesApiResult, instanceOf(FixturesApiResult::class.java))
         assertThat(fixturesApiResult, Is(notNullValue()))
     }
-
-    @Test
-    fun `'retrieveFixtures' returns null when request fails`() {
-        val fixturesApiResult = fixturesApiService.retrieveFixtures("http://fake/url", "", "")
-
-        assertThat(fixturesApiResult, Is(nullValue()))
-    }
 }

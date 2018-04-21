@@ -6,6 +6,7 @@ import com.cshep4.wcpredictor.constant.APIConstants.API_KEY
 import com.cshep4.wcpredictor.constant.APIConstants.API_URL
 import com.cshep4.wcpredictor.constant.APIConstants.HEADER_KEY
 import com.cshep4.wcpredictor.data.Match
+import com.cshep4.wcpredictor.data.PredictedMatch
 import com.cshep4.wcpredictor.repository.FixturesRepository
 import com.cshep4.wcpredictor.service.fixtures.FixturesApiService
 import com.cshep4.wcpredictor.service.fixtures.UpdateFixturesService
@@ -44,7 +45,7 @@ class FixturesService {
 
     fun retrieveAllPredictedMatchesByUserId(id: Long) : List<Match> = fixturesRepository.findPredictedMatchesByUserId(id).map { it.toDto() }
 
-    fun retrieveAllMatchesWithPredictions(id: Long) : List<Match> {
+    fun retrieveAllMatchesWithPredictions(id: Long) : List<PredictedMatch> {
         val matches = retrieveAllMatches()
 
         if (matches.isEmpty()) {

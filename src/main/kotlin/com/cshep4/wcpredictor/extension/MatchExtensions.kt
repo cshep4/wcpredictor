@@ -1,7 +1,7 @@
 package com.cshep4.wcpredictor.extension
 
-import com.cshep4.wcpredictor.data.Match
+import com.cshep4.wcpredictor.data.PredictedMatch
 
-fun List<Match>.getMatchById(id: Long?): Match {
+fun List<PredictedMatch>.getMatchById(id: Long?): PredictedMatch {
     return this.first { it.id == id }
 }

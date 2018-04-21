@@ -13,8 +13,14 @@ data class Match (
         var dateTime: LocalDateTime? = null,
         var matchday: Int = 0
 ) {
-    fun updateScoreline(hGoals: Int?, aGoals: Int?){
-        this.hGoals = hGoals
-        this.aGoals = aGoals
-    }
+    fun toPredictedMatch(): PredictedMatch = PredictedMatch(
+            id = this.id,
+            hTeam = this.hTeam,
+            aTeam = this.aTeam,
+            hGoals = this.hGoals,
+            aGoals = this.aGoals,
+            played = this.played,
+            group = this.group,
+            dateTime = this.dateTime,
+            matchday = this.matchday)
 }

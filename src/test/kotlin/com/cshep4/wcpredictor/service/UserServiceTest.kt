@@ -150,4 +150,24 @@ internal class UserServiceTest {
 
         assertThat(result, Is(nullValue()))
     }
+
+    @Test
+    fun `'retrieveUserByEmail' should retrieve user if one is found with email`() {
+        val user = User()
+
+        whenever(userRepository.findByEmail("test")).thenReturn(Optional.of(UserEntity.fromDto(user)))
+
+        val result = userService.retrieveUserByEmail("test")
+
+        assertThat(result, Is(user))
+    }
+
+    @Test
+    fun `'retrieveUserByEmail' should return null if no user is found`() {
+        whenever(userRepository.findByEmail("test")).thenReturn(Optional.empty())
+
+        val result = userService.retrieveUserByEmail("test")
+
+        assertThat(result, Is(nullValue()))
+    }
 }

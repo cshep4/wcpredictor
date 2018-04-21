@@ -1,6 +1,7 @@
 package com.cshep4.wcpredictor.controller
 
 import com.cshep4.wcpredictor.data.Match
+import com.cshep4.wcpredictor.data.PredictedMatch
 import com.cshep4.wcpredictor.service.FixturesService
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers
@@ -67,7 +68,7 @@ internal class FixturesControllerTest {
 
     @Test
     fun `'getAllPredictedMatches' should return a list of matches with users predictions and status OK if some are found`() {
-        val matches = listOf(Match())
+        val matches = listOf(PredictedMatch())
 
         whenever(fixturesService.retrieveAllMatchesWithPredictions(1)).thenReturn(matches)
 

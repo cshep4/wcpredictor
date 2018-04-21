@@ -1,13 +1,13 @@
 package com.cshep4.wcpredictor.service
 
 
+import com.cshep4.wcpredictor.data.LoginUser
 import com.cshep4.wcpredictor.data.SignUpUser
 import com.cshep4.wcpredictor.entity.UserEntity
 import com.cshep4.wcpredictor.extension.isValidEmailAddress
 import com.cshep4.wcpredictor.extension.isValidPassword
 import com.cshep4.wcpredictor.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -29,7 +29,7 @@ class UserService : UserDetailsService {
                 .map { it.toDto() }
                 .orElse(null) ?: throw UsernameNotFoundException("User not found")
 
-        return User(user.email, user.password, emptyList())
+        return LoginUser(user.id!!, user.email!!, user.password!!)
     }
 
     fun createUser(signUpUser: SignUpUser): com.cshep4.wcpredictor.data.User? {
@@ -48,6 +48,10 @@ class UserService : UserDetailsService {
     }
 
     fun retrieveUserById(id: Long): com.cshep4.wcpredictor.data.User? = userRepository.findById(id)
+            .map { it.toDto() }
+            .orElse(null)
+
+    fun retrieveUserByEmail(email: String): com.cshep4.wcpredictor.data.User? = userRepository.findByEmail(email)
             .map { it.toDto() }
             .orElse(null)
 }

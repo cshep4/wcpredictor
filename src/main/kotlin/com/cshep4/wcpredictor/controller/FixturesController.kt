@@ -1,6 +1,7 @@
 package com.cshep4.wcpredictor.controller
 
 import com.cshep4.wcpredictor.data.Match
+import com.cshep4.wcpredictor.data.PredictedMatch
 import com.cshep4.wcpredictor.service.FixturesService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -35,7 +36,7 @@ class FixturesController {
     }
 
     @GetMapping("/predicted/{id}")
-    fun getAllPredictedMatches(@PathVariable(value = "id") id: Long) : ResponseEntity<List<Match>> {
+    fun getAllPredictedMatches(@PathVariable(value = "id") id: Long) : ResponseEntity<List<PredictedMatch>> {
         val matches = fixturesService.retrieveAllMatchesWithPredictions(id)
 
         return when {

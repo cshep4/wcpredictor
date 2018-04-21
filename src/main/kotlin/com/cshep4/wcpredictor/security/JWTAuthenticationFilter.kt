@@ -1,5 +1,6 @@
 package com.cshep4.wcpredictor.security
 
+import com.cshep4.wcpredictor.data.LoginUser
 import com.cshep4.wcpredictor.entity.UserEntity
 import com.cshep4.wcpredictor.extension.generateJwtToken
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -18,6 +19,8 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 
+
+
 class JWTAuthenticationFilter(private val authManager: AuthenticationManager) : UsernamePasswordAuthenticationFilter() {
     @Throws(AuthenticationException::class, IOException::class)
     override fun attemptAuthentication(req: HttpServletRequest, res: HttpServletResponse): Authentication {
@@ -25,7 +28,12 @@ class JWTAuthenticationFilter(private val authManager: AuthenticationManager) : 
 
         val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(credentials.email, credentials.password, ArrayList<GrantedAuthority>())
 
-        return authManager.authenticate(usernamePasswordAuthenticationToken)
+        val auth = authManager.authenticate(usernamePasswordAuthenticationToken)
+
+        val user = auth.principal as LoginUser
+        res.setHeader("userId", user.id.toString())
+
+        return auth
     }
 
     @Throws(IOException::class, ServletException::class)

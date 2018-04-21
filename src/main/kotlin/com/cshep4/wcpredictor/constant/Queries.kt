@@ -23,6 +23,7 @@ object Queries {
             "Match.matchGroup, " +
             "Match.dateTime, " +
             "Match.matchday " +
+            "Match.matchday " +
             "FROM Match " +
             "INNER JOIN Prediction " +
             "ON Match.id = Prediction.matchId " +
