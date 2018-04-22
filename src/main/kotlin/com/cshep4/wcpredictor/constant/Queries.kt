@@ -19,6 +19,7 @@ object Queries {
     const val QUERY_GET_PREDICTIONS_BY_USER_ID = "SELECT * " +
             "FROM Prediction " +
             "WHERE userId = ?1"
+
     const val QUERY_GET_PREDICTED_MATCHES_BY_USER_ID = "SELECT Match.id, " +
             "Match.hTeam, " +
             "Match.aTeam, " +
@@ -27,7 +28,6 @@ object Queries {
             "Match.played, " +
             "Match.matchGroup, " +
             "Match.dateTime, " +
-            "Match.matchday " +
             "Match.matchday " +
             "FROM Match " +
             "INNER JOIN Prediction " +
