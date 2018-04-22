@@ -1,7 +1,7 @@
 package com.cshep4.wcpredictor.constant
 
 object Queries {
-    const val QUERY_IS_TOKEN_USED = "SELECT `used` " +
+    const val QUERY_IS_TOKEN_USED = "SELECT used " +
             "FROM Token " +
             "WHERE token = ?1"
 
