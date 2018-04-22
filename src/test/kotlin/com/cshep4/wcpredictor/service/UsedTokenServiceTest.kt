@@ -14,7 +14,10 @@ import org.hamcrest.CoreMatchers.`is` as Is
 
 @RunWith(MockitoJUnitRunner::class)
 internal class UsedTokenServiceTest {
-    private val token = "this is a token"
+    companion object {
+        const val TOKEN = "this is a token"
+        const val NUMBER_TOKENS_MODIFIED = 32
+    }
 
     @Mock
     private lateinit var tokenRepository: TokenRepository
@@ -24,30 +27,40 @@ internal class UsedTokenServiceTest {
 
     @Test
     fun `'hasTokenBeenUsed' returns false when token has not been used`() {
-        whenever(tokenRepository.getNumberOfTokens(token)).thenReturn(0)
+        whenever(tokenRepository.isTokenUsed(TOKEN)).thenReturn(false)
 
-        val result = usedTokenService.hasTokenBeenUsed(token)
+        val result = usedTokenService.hasTokenBeenUsed(TOKEN)
 
         assertThat(result, Is(false))
     }
 
     @Test
     fun `'hasTokenBeenUsed' returns true when token has been used`() {
-        whenever(tokenRepository.getNumberOfTokens(token)).thenReturn(1)
+        whenever(tokenRepository.isTokenUsed(TOKEN)).thenReturn(true)
 
-        val result = usedTokenService.hasTokenBeenUsed(token)
+        val result = usedTokenService.hasTokenBeenUsed(TOKEN)
 
         assertThat(result, Is(true))
     }
 
     @Test
     fun `'addUsedToken' adds token to db`() {
-        val tokenEntity = TokenEntity(token)
+        val tokenEntity = TokenEntity(TOKEN)
         whenever(tokenRepository.save(tokenEntity)).thenReturn(tokenEntity)
 
-        val result = usedTokenService.addUsedToken(token)
+        val result = usedTokenService.addUsedToken(TOKEN)
 
         verify(tokenRepository).save(tokenEntity)
-        assertThat(result, Is(token))
+        assertThat(result, Is(TOKEN))
+    }
+
+    @Test
+    fun `'setUsedToken' returns number of tokens modified when token set to used`() {
+        whenever(tokenRepository.setTokenToUsed(TOKEN)).thenReturn(NUMBER_TOKENS_MODIFIED)
+
+        val result = usedTokenService.setUsedToken(TOKEN)
+
+        verify(tokenRepository).setTokenToUsed(TOKEN)
+        assertThat(result, Is(NUMBER_TOKENS_MODIFIED))
     }
 }

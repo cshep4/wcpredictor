@@ -1,13 +1,13 @@
 package com.cshep4.wcpredictor.security
 
 import com.cshep4.wcpredictor.constant.SecurityConstants.FIXTURES_UPDATE_URL
+import com.cshep4.wcpredictor.constant.SecurityConstants.SET_USED_TOKEN_URL
 import com.cshep4.wcpredictor.constant.SecurityConstants.SIGN_UP_URL
 import com.cshep4.wcpredictor.service.UsedTokenService
 import com.cshep4.wcpredictor.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
-import org.springframework.http.HttpMethod.POST
-import org.springframework.http.HttpMethod.PUT
+import org.springframework.http.HttpMethod.*
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -35,6 +35,8 @@ class WebSecurity : WebSecurityConfigurerAdapter() {
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(POST, SIGN_UP_URL).permitAll()
                 .antMatchers(PUT, FIXTURES_UPDATE_URL).permitAll()
+                .antMatchers(PUT, SET_USED_TOKEN_URL).permitAll()
+                .antMatchers(GET, "console/").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(JWTAuthenticationFilter(authenticationManager()))

@@ -31,7 +31,6 @@ class FixturesController {
         return when {
             matches.isEmpty() -> ResponseEntity.notFound().build()
             else -> ResponseEntity.ok(matches)
-
         }
     }
 
@@ -42,7 +41,6 @@ class FixturesController {
         return when {
             matches.isEmpty() -> ResponseEntity.notFound().build()
             else -> ResponseEntity.ok(matches)
-
         }
     }
 }

@@ -7,10 +7,11 @@ create table User
    password varchar(255) not null,
    primary key(id)
 );
-
+drop table IF EXISTS Token;
 create table Token
 (
   token varchar(255) not null,
+  used boolean DEFAULT FALSE,
   PRIMARY KEY(token)
 );
 

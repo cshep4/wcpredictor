@@ -1,13 +1,18 @@
 package com.cshep4.wcpredictor.constant
 
 object Queries {
-    const val QUERY_IS_TOKEN_USED = "SELECT COUNT(*) " +
+    const val QUERY_IS_TOKEN_USED = "SELECT `used` " +
             "FROM Token " +
+            "WHERE token = ?1"
+
+    const val QUERY_SET_TOKEN_TO_USED = "UPDATE token " +
+            "SET used = true " +
             "WHERE token = ?1"
 
     const val QUERY_GET_USER_BY_EMAIL = "SELECT * " +
             "FROM Users " +
             "WHERE email = ?1"
+
     const val QUERY_SAVE_USER = "INSERT INTO Users (email, password) " +
             "VALUES (?1, ?2)"
 
