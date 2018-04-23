@@ -1,10 +1,12 @@
 package com.cshep4.wcpredictor.service
 
+import com.cshep4.wcpredictor.component.fixtures.KnockoutFixturesCollector
 import com.cshep4.wcpredictor.component.leaguetable.GroupCreator
 import com.cshep4.wcpredictor.component.leaguetable.LeagueTableCalculator
+import com.cshep4.wcpredictor.data.KnockoutStandings
 import com.cshep4.wcpredictor.data.LeagueTable
 import com.cshep4.wcpredictor.data.Match
-import com.cshep4.wcpredictor.data.Standings
+import com.cshep4.wcpredictor.data.PredictedMatch
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -25,38 +27,47 @@ internal class LeagueTableServiceTest {
     @Mock
     private lateinit var leagueTableCalculator: LeagueTableCalculator
 
+    @Mock
+    private lateinit var knockoutFixturesCollector: KnockoutFixturesCollector
+
     @InjectMocks
     private lateinit var leagueTableService: LeagueTableService
 
     @Test
     fun `'getCurrentStandings' retrieves matches, creates each group and returns standings`() {
-        val matches = listOf(Match())
+        val matches = listOf(Match(matchday = 1), Match(matchday = 5))
+        val groupMatches = listOf(Match(matchday = 1))
+        val knockoutMatches = listOf(Match(matchday = 5))
         val groups = listOf(LeagueTable())
+        val knockoutStandings = listOf(KnockoutStandings())
 
         whenever(fixturesService.retrieveAllMatches()).thenReturn(matches)
         whenever(groupCreator.create()).thenReturn(groups)
-        whenever(leagueTableCalculator.calculate(matches, groups)).thenReturn(groups)
+        whenever(leagueTableCalculator.calculate(groupMatches, groups)).thenReturn(groups)
+        whenever(knockoutFixturesCollector.collect(knockoutMatches)).thenReturn(knockoutStandings)
 
         val result = leagueTableService.getCurrentStandings()
 
-        val expectedStandings = Standings(groups)
-
-        assertThat(result, `is`(expectedStandings))
+        assertThat(result.standings, `is`(groups))
+        assertThat(result.knockoutStandings, `is`(knockoutStandings))
     }
 
     @Test
     fun `'getPredictedStandings' retrieves match predictions, creates each group and returns standings`() {
-        val matches = listOf(Match())
+        val matches = listOf(PredictedMatch(matchday = 1), PredictedMatch(matchday = 5))
+        val groupMatches = listOf(Match(matchday = 1))
+        val knockoutMatches = listOf(Match(matchday = 5))
         val groups = listOf(LeagueTable())
+        val knockoutStandings = listOf(KnockoutStandings())
 
-        whenever(fixturesService.retrieveAllPredictedMatchesByUserId(1)).thenReturn(matches)
+        whenever(fixturesService.retrieveAllMatchesWithPredictions(1)).thenReturn(matches)
         whenever(groupCreator.create()).thenReturn(groups)
-        whenever(leagueTableCalculator.calculate(matches, groups)).thenReturn(groups)
+        whenever(leagueTableCalculator.calculate(groupMatches, groups)).thenReturn(groups)
+        whenever(knockoutFixturesCollector.collect(knockoutMatches)).thenReturn(knockoutStandings)
 
         val result = leagueTableService.getPredictedStandings(1)
 
-        val expectedStandings = Standings(groups)
-
-        assertThat(result, `is`(expectedStandings))
+        assertThat(result.standings, `is`(groups))
+        assertThat(result.knockoutStandings, `is`(knockoutStandings))
     }
 }

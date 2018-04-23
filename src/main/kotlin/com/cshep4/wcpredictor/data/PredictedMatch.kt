@@ -19,4 +19,15 @@ data class PredictedMatch (
         this.hGoals = hGoals
         this.aGoals = aGoals
     }
+
+    fun toMatch(): Match = Match(
+            id = this.id,
+            hTeam = this.hTeam,
+            aTeam = this.aTeam,
+            hGoals = this.hGoals,
+            aGoals = this.aGoals,
+            played = this.played,
+            group = this.group,
+            dateTime = this.dateTime,
+            matchday = this.matchday)
 }

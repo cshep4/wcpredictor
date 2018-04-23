@@ -18,6 +18,12 @@ data class LeagueTable(
         var table: MutableList<TableTeam> = mutableListOf()
 )
 
+data class KnockoutStandings(
+        val round: String = "",
+        val matches: List<Match> = emptyList()
+)
+
 data class Standings(
-        val standings: List<LeagueTable> = emptyList()
+        val standings: List<LeagueTable> = emptyList(),
+        val knockoutStandings: List<KnockoutStandings> = emptyList()
 )
