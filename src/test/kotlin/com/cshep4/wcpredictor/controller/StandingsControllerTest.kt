@@ -1,6 +1,6 @@
 package com.cshep4.wcpredictor.controller
 
-import com.cshep4.wcpredictor.data.UserLeagueOverview
+import com.cshep4.wcpredictor.data.StandingsOverview
 import com.cshep4.wcpredictor.service.StandingsService
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.`is`
@@ -21,14 +21,14 @@ internal class StandingsControllerTest {
     lateinit var standingsController: StandingsController
 
     @Test
-    fun `'getUsersLeagueList' returns OK and a list of leagues`() {
-        val userLeagues = listOf(UserLeagueOverview())
+    fun `'getUsersLeagueList' returns OK and standings overview`() {
+        val standingsOverview = StandingsOverview()
 
-        whenever(standingsService.retrieveUsersLeagueList(1)).thenReturn(userLeagues)
+        whenever(standingsService.retrieveStandingsOverview(1)).thenReturn(standingsOverview)
 
         val result = standingsController.getUsersLeagueList(1)
 
         assertThat(result.statusCode, `is`(OK))
-        assertThat(result.body, `is`(userLeagues))
+        assertThat(result.body, `is`(standingsOverview))
     }
 }

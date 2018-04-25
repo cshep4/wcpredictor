@@ -54,4 +54,18 @@ object Queries {
             " INNER JOIN League" +
             " ON League.id = UserLeague.leagueId" +
             " WHERE userId = ?1"
+
+    const val QUERY_GET_OVERALL_LEAGUE_OVERVIEW = "SELECT id, count, score, rank" +
+            " FROM (" +
+            "  SELECT" +
+            "    id," +
+            "    COUNT(*)" +
+            "    OVER ()                 AS count," +
+            "    score," +
+            "    DENSE_RANK()" +
+            "    OVER (" +
+            "      ORDER BY score DESC ) AS rank" +
+            "  FROM users" +
+            " ) as u" +
+            " WHERE id = ?1"
 }
