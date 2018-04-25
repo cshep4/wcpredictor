@@ -8,9 +8,10 @@ import io.jsonwebtoken.SignatureAlgorithm
 import java.util.*
 import javax.servlet.http.HttpServletResponse
 
-fun HttpServletResponse.generateJwtToken(user: String) {
+fun HttpServletResponse.generateJwtToken(user: String, subject: String) {
     val token = Jwts.builder()
-            .setSubject(user)
+            .setSubject(subject)
+            .setIssuer(user)
             .setExpiration(Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
             .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.toByteArray())
             .compact()

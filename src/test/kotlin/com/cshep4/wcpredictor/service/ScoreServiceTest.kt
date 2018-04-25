@@ -9,6 +9,7 @@ import org.junit.runner.RunWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import java.math.BigInteger.valueOf
 
 @RunWith(MockitoJUnitRunner::class)
 internal class ScoreServiceTest {
@@ -20,7 +21,7 @@ internal class ScoreServiceTest {
 
     @Test
     fun `'retrieveScoreAndRank' should get user scores and ranks from db and return current users`() {
-        val userRanks = listOf(arrayOf(1L, 1L, 4L), arrayOf(2L, 2L, 3L), arrayOf(3L, 3L, 1L))
+        val userRanks = listOf(arrayOf(valueOf(1), valueOf(1L), 4), arrayOf(valueOf(2L), valueOf(2L), 3), arrayOf(valueOf(3L), valueOf(3L), 1))
 
         whenever(userRepository.getUserRankAndScore()).thenReturn(userRanks)
 

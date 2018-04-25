@@ -38,6 +38,6 @@ class JWTAuthenticationFilter(private val authManager: AuthenticationManager) : 
 
     @Throws(IOException::class, ServletException::class)
     override fun successfulAuthentication(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain, auth: Authentication) {
-        res.generateJwtToken((auth.principal as User).username)
+        res.generateJwtToken((auth.principal as User).username, req.requestURI)
     }
 }

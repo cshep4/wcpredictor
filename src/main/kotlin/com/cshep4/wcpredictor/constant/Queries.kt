@@ -38,4 +38,20 @@ object Queries {
             "DENSE_RANK() OVER (ORDER BY u.score DESC), " +
             "u.score " +
             "FROM Users AS u"
+
+    const val QUERY_GET_USERS_LEAGUE_LIST = "SELECT League.name as leagueName," +
+            "  League.id as pin," +
+            "  (SELECT rank" +
+            "    FROM (" +
+            "          SELECT DENSE_RANK() OVER (ORDER BY score DESC) as rank," +
+            "            id as uId" +
+            "            FROM Users" +
+            "            INNER JOIN UserLeague u" +
+            "            ON Users.id = u.userId" +
+            "            WHERE u.leagueId = League.id) as t" +
+            "    WHERE uId = ?1) as rank" +
+            " FROM UserLeague" +
+            " INNER JOIN League" +
+            " ON League.id = UserLeague.leagueId" +
+            " WHERE userId = ?1"
 }

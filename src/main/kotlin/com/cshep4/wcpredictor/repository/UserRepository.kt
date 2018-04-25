@@ -1,6 +1,7 @@
 package com.cshep4.wcpredictor.repository
 
 import com.cshep4.wcpredictor.constant.Queries.QUERY_GET_SCORE_AND_RANK
+import com.cshep4.wcpredictor.constant.Queries.QUERY_GET_USERS_LEAGUE_LIST
 import com.cshep4.wcpredictor.constant.Queries.QUERY_GET_USER_BY_EMAIL
 import com.cshep4.wcpredictor.constant.Queries.QUERY_SAVE_USER
 import com.cshep4.wcpredictor.entity.UserEntity
@@ -14,11 +15,12 @@ interface UserRepository : JpaRepository<UserEntity, Long> {
     @Query(value = QUERY_GET_USER_BY_EMAIL, nativeQuery = true)
     fun findByEmail(email: String): Optional<UserEntity>
 
-    fun findById(id: Long?): Optional<UserEntity>?
-
     @Query(value = QUERY_SAVE_USER, nativeQuery = true)
     fun save(email: String, password: String): Optional<UserEntity>?
 
     @Query(value = QUERY_GET_SCORE_AND_RANK, nativeQuery = true)
     fun getUserRankAndScore(): List<Array<Any>>
+
+    @Query(value = QUERY_GET_USERS_LEAGUE_LIST, nativeQuery = true)
+    fun getUsersLeagueList(id: Long): List<Array<Any>>
 }
