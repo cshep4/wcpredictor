@@ -33,4 +33,9 @@ object Queries {
             "INNER JOIN Prediction " +
             "ON Match.id = Prediction.matchId " +
             "WHERE Prediction.userId = ?1"
+
+    const val QUERY_GET_SCORE_AND_RANK = "SELECT u.id, " +
+            "DENSE_RANK() OVER (ORDER BY u.score DESC), " +
+            "u.score " +
+            "FROM Users AS u"
 }

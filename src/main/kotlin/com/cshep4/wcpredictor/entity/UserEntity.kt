@@ -13,7 +13,9 @@ data class UserEntity (
     var firstName: String= "",
     var surname: String = "",
     var email: String? = null,
-    var password: String? = null
+    var password: String? = null,
+    var predictedWinner: String? = null,
+    var score: Int = 0
 ){
 
     fun toDto(): User = User(
@@ -21,7 +23,9 @@ data class UserEntity (
             firstName = this.firstName,
             surname = this.surname,
             email = this.email,
-            password = this.password)
+            password = this.password,
+            predictedWinner = this.predictedWinner,
+            score = this.score)
 
     companion object {
         fun fromDto(dto: User) = UserEntity(
@@ -29,13 +33,17 @@ data class UserEntity (
                 firstName = dto.firstName,
                 surname = dto.surname,
                 email = dto.email,
-                password = dto.password)
+                password = dto.password,
+                predictedWinner = dto.predictedWinner,
+                score = dto.score)
 
         fun fromDto(dto: SignUpUser) = UserEntity(
                 id = dto.id!!,
                 firstName = dto.firstName,
                 surname = dto.surname,
                 email = dto.email,
-                password = dto.password)
+                password = dto.password,
+                predictedWinner = dto.predictedWinner,
+                score = dto.score)
     }
 }

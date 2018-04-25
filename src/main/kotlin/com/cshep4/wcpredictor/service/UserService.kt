@@ -33,6 +33,8 @@ class UserService : UserDetailsService {
     }
 
     fun createUser(signUpUser: SignUpUser): com.cshep4.wcpredictor.data.User? {
+        signUpUser.score = 0
+
         return when {
             !signUpUser.email.isValidEmailAddress() -> null
             userRepository.findByEmail(signUpUser.email).isPresent -> null
