@@ -9,8 +9,11 @@ import java.util.*
 import javax.servlet.http.HttpServletResponse
 
 fun HttpServletResponse.generateJwtToken(user: String, subject: String) {
+    //add timestamp to make the token unique
+    val subjectWithTimestamp = subject + System.currentTimeMillis()
+
     val token = Jwts.builder()
-            .setSubject(subject)
+            .setSubject(subjectWithTimestamp)
             .setIssuer(user)
             .setExpiration(Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
             .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.toByteArray())
