@@ -1,11 +1,18 @@
 package com.cshep4.wcpredictor.service
 
-import com.cshep4.wcpredictor.data.OverallLeagueOverview
-import com.cshep4.wcpredictor.data.StandingsOverview
-import com.cshep4.wcpredictor.data.UserLeagueOverview
-import com.cshep4.wcpredictor.repository.UserRepository
+import com.cshep4.wcpredictor.data.*
+import com.cshep4.wcpredictor.repository.StandingsRepository
+import com.cshep4.wcpredictor.repository.UserLeagueRepository
+import com.cshep4.wcpredictor.service.standings.add.AddLeagueService
+import com.cshep4.wcpredictor.service.standings.join.ExistingLeagueCheckerService
+import com.cshep4.wcpredictor.service.standings.join.JoinLeagueService
+import com.cshep4.wcpredictor.service.standings.join.UserLeagueOverviewService
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.times
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,19 +23,40 @@ import java.math.BigInteger.valueOf
 
 @RunWith(MockitoJUnitRunner::class)
 internal class StandingsServiceTest {
+    private companion object {
+        const val LEAGUE_PIN: Long = 1234567890
+        const val USER_ID: Long = 1
+        const val LEAGUE_NAME = "League"
+    }
+
     @Mock
-    lateinit var userRepository: UserRepository
+    private lateinit var standingsRepository: StandingsRepository
+
+    @Mock
+    private lateinit var existingLeagueCheckerService: ExistingLeagueCheckerService
+
+    @Mock
+    private lateinit var joinLeagueService: JoinLeagueService
+
+    @Mock
+    private lateinit var userLeagueOverviewService: UserLeagueOverviewService
+
+    @Mock
+    private lateinit var addLeagueService: AddLeagueService
+
+    @Mock
+    private lateinit var userLeagueRepository: UserLeagueRepository
 
     @InjectMocks
-    lateinit var standingsService: StandingsService
+    private lateinit var standingsService: StandingsService
 
     @Test
     fun `'retrieveStandingsOverview' gets standings overview from db and returns them`() {
         val userLeagues = listOf(arrayOf("test", valueOf(12345), valueOf(2)))
         val overallLeagueOverview = listOf(arrayOf(valueOf(1), valueOf(2), 3, valueOf(4)))
 
-        whenever(userRepository.getUsersLeagueList(1)).thenReturn(userLeagues)
-        whenever(userRepository.getOverallLeagueOverview(1)).thenReturn(overallLeagueOverview)
+        whenever(standingsRepository.getUsersLeagueList(1)).thenReturn(userLeagues)
+        whenever(standingsRepository.getOverallLeagueOverview(1)).thenReturn(overallLeagueOverview)
 
         val expectedUserLeagues = listOf(UserLeagueOverview("test", 12345, 2))
         val expectedOverallLeague = OverallLeagueOverview(4, 2)
@@ -39,4 +67,56 @@ internal class StandingsServiceTest {
         assertThat(result, `is`(expectedResult))
     }
 
+    @Test
+    fun `'joinLeague' returns null if league doesn't exist`() {
+        val userLeague = UserLeague(leagueId = LEAGUE_PIN, userId = USER_ID)
+
+        whenever(existingLeagueCheckerService.doesLeagueExist(LEAGUE_PIN)).thenReturn(false)
+
+        val result = standingsService.joinLeague(userLeague)
+
+        verify(joinLeagueService, times(0)).joinLeague(userLeague)
+        verify(userLeagueOverviewService, times(0)).retrieveUserLeagueOverview(LEAGUE_PIN, USER_ID)
+        assertThat(result, `is`(nullValue()))
+    }
+
+    @Test
+    fun `'joinLeague' adds user to league and returns the league's overview`() {
+        val userLeague = UserLeague(leagueId = LEAGUE_PIN, userId = USER_ID)
+        val userLeagueOverview = UserLeagueOverview()
+
+        whenever(existingLeagueCheckerService.doesLeagueExist(LEAGUE_PIN)).thenReturn(true)
+        whenever(joinLeagueService.joinLeague(userLeague)).thenReturn(userLeague)
+        whenever(userLeagueOverviewService.retrieveUserLeagueOverview(LEAGUE_PIN, USER_ID)).thenReturn(userLeagueOverview)
+
+        val result = standingsService.joinLeague(userLeague)
+
+        verify(joinLeagueService).joinLeague(userLeague)
+        verify(userLeagueOverviewService).retrieveUserLeagueOverview(LEAGUE_PIN, USER_ID)
+        assertThat(result, `is`(userLeagueOverview))
+    }
+
+    @Test
+    fun `'addLeague' adds league, adds user to league then returns the league object`() {
+        val userLeague = UserLeague(leagueId = LEAGUE_PIN, userId = USER_ID)
+        val league = League(id = LEAGUE_PIN, name = LEAGUE_NAME)
+
+        whenever(addLeagueService.addLeagueToDb(LEAGUE_NAME)).thenReturn(league)
+        whenever(joinLeagueService.joinLeague(userLeague)).thenReturn(userLeague)
+
+        val result = standingsService.addLeague(LEAGUE_NAME, USER_ID)
+
+        verify(addLeagueService).addLeagueToDb(LEAGUE_NAME)
+        verify(joinLeagueService).joinLeague(userLeague)
+        assertThat(result, `is`(league))
+    }
+
+    @Test
+    fun `'leaveLeague' removes user from league in db`() {
+        val userLeague = UserLeague(leagueId = LEAGUE_PIN, userId = USER_ID)
+
+        standingsService.leaveLeague(userLeague)
+
+        verify(userLeagueRepository).delete(any())
+    }
 }

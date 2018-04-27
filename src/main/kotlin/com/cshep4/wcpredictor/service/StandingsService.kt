@@ -1,16 +1,20 @@
 package com.cshep4.wcpredictor.service
 
-import com.cshep4.wcpredictor.data.OverallLeagueOverview
-import com.cshep4.wcpredictor.data.StandingsOverview
-import com.cshep4.wcpredictor.data.UserLeagueOverview
-import com.cshep4.wcpredictor.repository.UserRepository
+import com.cshep4.wcpredictor.data.*
+import com.cshep4.wcpredictor.entity.UserLeagueEntity
+import com.cshep4.wcpredictor.repository.StandingsRepository
+import com.cshep4.wcpredictor.repository.UserLeagueRepository
+import com.cshep4.wcpredictor.service.standings.add.AddLeagueService
+import com.cshep4.wcpredictor.service.standings.join.ExistingLeagueCheckerService
+import com.cshep4.wcpredictor.service.standings.join.JoinLeagueService
+import com.cshep4.wcpredictor.service.standings.join.UserLeagueOverviewService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
 @Service
 class StandingsService {
-    companion object {
+    private companion object {
         const val LEAGUE_NUMBER_INDEX = 0
         const val PIN_INDEX = 1
         const val LEAGUE_RANK_INDEX = 2
@@ -19,7 +23,22 @@ class StandingsService {
     }
 
     @Autowired
-    lateinit var userRepository: UserRepository
+    private lateinit var standingsRepository: StandingsRepository
+
+    @Autowired
+    private lateinit var existingLeagueCheckerService: ExistingLeagueCheckerService
+
+    @Autowired
+    private lateinit var joinLeagueService: JoinLeagueService
+
+    @Autowired
+    private lateinit var userLeagueOverviewService: UserLeagueOverviewService
+
+    @Autowired
+    private lateinit var addLeagueService: AddLeagueService
+
+    @Autowired
+    private lateinit var userLeagueRepository: UserLeagueRepository
 
     fun retrieveStandingsOverview(id: Long) : StandingsOverview {
         val userLeagues = getUsersLeagueList(id)
@@ -30,14 +49,40 @@ class StandingsService {
     }
 
     private fun getUsersLeagueList(id: Long) : List<UserLeagueOverview> {
-        val rawData = userRepository.getUsersLeagueList(id)
+        val rawData = standingsRepository.getUsersLeagueList(id)
 
         return rawData.map { UserLeagueOverview(it[LEAGUE_NUMBER_INDEX] as String, (it[PIN_INDEX] as BigInteger).toLong(), (it[LEAGUE_RANK_INDEX] as BigInteger).toLong()) }
     }
 
     private fun getOverallLeagueOverview(id: Long) : OverallLeagueOverview {
-        val rawData = userRepository.getOverallLeagueOverview(id)[0]
+        val rawData = standingsRepository.getOverallLeagueOverview(id)[0]
 
         return OverallLeagueOverview((rawData[OVERALL_RANK_INDEX] as BigInteger).toLong(), (rawData[COUNT_INDEX] as BigInteger).toLong())
+    }
+
+    fun joinLeague(userLeague: UserLeague) : UserLeagueOverview? {
+        val leagueExists = existingLeagueCheckerService.doesLeagueExist(userLeague.leagueId)
+
+        if (!leagueExists) {
+            return null
+        }
+
+        val addedUserLeagueRecord = joinLeagueService.joinLeague(userLeague)
+
+        return userLeagueOverviewService.retrieveUserLeagueOverview(addedUserLeagueRecord.leagueId, addedUserLeagueRecord.userId)
+    }
+
+    fun addLeague(name: String, id: Long) : League {
+        val league = addLeagueService.addLeagueToDb(name)
+
+        val userLeague = UserLeague(leagueId = league.id, userId = id)
+        joinLeagueService.joinLeague(userLeague)
+
+        return league
+    }
+
+    fun leaveLeague(userLeague: UserLeague) {
+        val userLeagueEntity = UserLeagueEntity.fromDto(userLeague)
+        userLeagueRepository.delete(userLeagueEntity)
     }
 }

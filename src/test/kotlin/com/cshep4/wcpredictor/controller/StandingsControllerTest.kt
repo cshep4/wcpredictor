@@ -1,16 +1,17 @@
 package com.cshep4.wcpredictor.controller
 
-import com.cshep4.wcpredictor.data.StandingsOverview
+import com.cshep4.wcpredictor.data.*
 import com.cshep4.wcpredictor.service.StandingsService
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import org.springframework.http.HttpStatus.OK
+import org.springframework.http.HttpStatus.*
 
 @RunWith(MockitoJUnitRunner::class)
 internal class StandingsControllerTest {
@@ -30,5 +31,55 @@ internal class StandingsControllerTest {
 
         assertThat(result.statusCode, `is`(OK))
         assertThat(result.body, `is`(standingsOverview))
+    }
+
+    @Test
+    fun `'joinUserLeague' returns OK and returns league overview when user joins league`() {
+        val userLeague = UserLeague()
+        val userLeagueOverview = UserLeagueOverview()
+
+        whenever(standingsService.joinLeague(userLeague)).thenReturn(userLeagueOverview)
+
+        val result = standingsController.joinUserLeague(userLeague)
+
+        assertThat(result.statusCode, `is`(OK))
+        assertThat(result.body, `is`(userLeagueOverview))
+    }
+
+    @Test
+    fun `'joinUserLeague' returns NOT_FOUND when league doesn't exist`() {
+        val userLeague = UserLeague()
+
+        whenever(standingsService.joinLeague(userLeague)).thenReturn(null)
+
+        val result = standingsController.joinUserLeague(userLeague)
+
+        assertThat(result.statusCode, `is`(NOT_FOUND))
+        assertThat(result.body, `is`(nullValue()))
+    }
+
+    @Test
+    fun `'addUserLeague' returns CREATED and returns league user adds league`() {
+        val name = "League"
+        val id = 1L
+        val league = League(name = name)
+        val addLeague = AddLeague(name, id)
+
+        whenever(standingsService.addLeague(name, id)).thenReturn(league)
+
+        val result = standingsController.addUserLeague(addLeague)
+
+        assertThat(result.statusCode, `is`(CREATED))
+        assertThat(result.body, `is`(league))
+    }
+
+    @Test
+    fun `'leaveUserLeague' returns OK when user leaves league`() {
+        val userLeague = UserLeague()
+
+        val result = standingsController.leaveUserLeague(userLeague)
+
+        assertThat(result.statusCode, `is`(OK))
+        assertThat(result.body, `is`(nullValue()))
     }
 }
