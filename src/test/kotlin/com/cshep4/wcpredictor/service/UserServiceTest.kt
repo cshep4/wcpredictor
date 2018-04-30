@@ -55,7 +55,7 @@ internal class UserServiceTest {
 
     @Test
     fun `'createUser' does not add user to db if password is invalid`() {
-        val user = SignUpUser(firstName = "first", surname = "name", email = email, password = "invalidpassword", confirmPassword = "invalidpassword")
+        val user = SignUpUser(firstName = "first", surname = "name", email = email, password = "invalidpassword", confirmPassword = "invalidpassword", predictedWinner = "France")
 
         val result = userService.createUser(user)
 
@@ -65,7 +65,7 @@ internal class UserServiceTest {
 
     @Test
     fun `'createUser' does not add user to db if passwords don't match`() {
-        val user = SignUpUser(firstName = "first", surname = "name", email = email, password = "Pass123", confirmPassword = "Word123")
+        val user = SignUpUser(firstName = "first", surname = "name", email = email, password = "Pass123", confirmPassword = "Word123", predictedWinner = "France")
 
         val result = userService.createUser(user)
 
@@ -75,7 +75,7 @@ internal class UserServiceTest {
 
     @Test
     fun `'createUser' does not add user to db if email is invalid`() {
-        val user = SignUpUser(firstName = "first", surname = "name", email = "invalid email", password = "Pass123", confirmPassword = "Pass123")
+        val user = SignUpUser(firstName = "first", surname = "name", email = "invalid email", password = "Pass123", confirmPassword = "Pass123", predictedWinner = "France")
 
         val result = userService.createUser(user)
 
@@ -85,7 +85,7 @@ internal class UserServiceTest {
 
     @Test
     fun `'createUser' does not add user to db if first name is blank`() {
-        val user = SignUpUser(firstName = "", surname = "name", email = email, password = "Pass123", confirmPassword = "Pass123")
+        val user = SignUpUser(firstName = "", surname = "name", email = email, password = "Pass123", confirmPassword = "Pass123", predictedWinner = "France")
 
         val result = userService.createUser(user)
 
@@ -95,7 +95,7 @@ internal class UserServiceTest {
 
     @Test
     fun `'createUser' does not add user to db if surname is blank`() {
-        val user = SignUpUser(firstName = "first", surname = "", email = email, password = "Pass123", confirmPassword = "Pass123")
+        val user = SignUpUser(firstName = "first", surname = "", email = email, password = "Pass123", confirmPassword = "Pass123", predictedWinner = "France")
 
         val result = userService.createUser(user)
 
@@ -105,7 +105,7 @@ internal class UserServiceTest {
 
     @Test
     fun `'createUser' does not add user to db if user already exists with same email`() {
-        val user = SignUpUser(firstName = "first", surname = "name", email = email, password = "Pass123", confirmPassword = "Pass123")
+        val user = SignUpUser(firstName = "first", surname = "name", email = email, password = "Pass123", confirmPassword = "Pass123", predictedWinner = "France")
 
         whenever(userRepository.findByEmail(email)).thenReturn(Optional.of(UserEntity.fromDto(user)))
 
@@ -117,7 +117,7 @@ internal class UserServiceTest {
 
     @Test
     fun `'createUser' adds user to db`() {
-        val user = SignUpUser(firstName = "first", surname = "name", email = email, password = "Pass123", confirmPassword = "Pass123")
+        val user = SignUpUser(firstName = "first", surname = "name", email = email, password = "Pass123", confirmPassword = "Pass123", predictedWinner = "France")
 
         `when`(userRepository.save(any(UserEntity::class.java))).thenReturn(UserEntity.fromDto(user))
         whenever(userRepository.findByEmail(email)).thenReturn(Optional.empty())

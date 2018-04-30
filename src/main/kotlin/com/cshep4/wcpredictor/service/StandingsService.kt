@@ -2,6 +2,7 @@ package com.cshep4.wcpredictor.service
 
 import com.cshep4.wcpredictor.data.*
 import com.cshep4.wcpredictor.entity.UserLeagueEntity
+import com.cshep4.wcpredictor.repository.LeagueTableRepository
 import com.cshep4.wcpredictor.repository.StandingsRepository
 import com.cshep4.wcpredictor.repository.UserLeagueRepository
 import com.cshep4.wcpredictor.service.standings.add.AddLeagueService
@@ -39,6 +40,9 @@ class StandingsService {
 
     @Autowired
     private lateinit var userLeagueRepository: UserLeagueRepository
+
+    @Autowired
+    private lateinit var leagueTableRepository: LeagueTableRepository
 
     fun retrieveStandingsOverview(id: Long) : StandingsOverview {
         val userLeagues = getUsersLeagueList(id)
@@ -85,4 +89,8 @@ class StandingsService {
         val userLeagueEntity = UserLeagueEntity.fromDto(userLeague)
         userLeagueRepository.delete(userLeagueEntity)
     }
+
+    fun retrieveLeagueTable(pin: Long) : List<LeagueTableUser> = leagueTableRepository.getLeagueTable(pin)
+            .sortedByDescending { it.score }
+            .map { it.toDto() }
 }

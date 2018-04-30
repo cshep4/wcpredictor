@@ -1,6 +1,8 @@
 package com.cshep4.wcpredictor.service
 
 import com.cshep4.wcpredictor.data.*
+import com.cshep4.wcpredictor.entity.LeagueTableUserEntity
+import com.cshep4.wcpredictor.repository.LeagueTableRepository
 import com.cshep4.wcpredictor.repository.StandingsRepository
 import com.cshep4.wcpredictor.repository.UserLeagueRepository
 import com.cshep4.wcpredictor.service.standings.add.AddLeagueService
@@ -46,6 +48,9 @@ internal class StandingsServiceTest {
 
     @Mock
     private lateinit var userLeagueRepository: UserLeagueRepository
+
+    @Mock
+    private lateinit var leagueTableRepository: LeagueTableRepository
 
     @InjectMocks
     private lateinit var standingsService: StandingsService
@@ -118,5 +123,17 @@ internal class StandingsServiceTest {
         standingsService.leaveLeague(userLeague)
 
         verify(userLeagueRepository).delete(any())
+    }
+
+    @Test
+    fun `'retrieveLeagueTable' get league table from db, sorts it descending by points and returns it`() {
+        val tableEntity = listOf(LeagueTableUserEntity(score = 44), LeagueTableUserEntity(score = 80))
+
+        whenever(leagueTableRepository.getLeagueTable(1)).thenReturn(tableEntity)
+
+        val expectedResult = tableEntity.sortedByDescending { it.score }.map { it.toDto() }
+        val result = standingsService.retrieveLeagueTable(1)
+
+        assertThat(result, `is`(expectedResult))
     }
 }

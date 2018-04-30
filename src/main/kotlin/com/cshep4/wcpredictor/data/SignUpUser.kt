@@ -6,5 +6,5 @@ data class SignUpUser (val id: Long? = 0,
                        var email: String,
                        var password: String,
                        var confirmPassword: String,
-                       var predictedWinner: String? = null,
+                       var predictedWinner: String,
                        var score: Int = 0)

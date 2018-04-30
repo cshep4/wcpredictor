@@ -43,4 +43,11 @@ class StandingsController {
         standingsService.leaveLeague(userLeague)
         return ResponseEntity.status(OK).build()
     }
+
+    @GetMapping("/league/{pin}")
+    fun getLeagueTable(@PathVariable(value = "pin") pin: Long) : ResponseEntity<List<LeagueTableUser>> {
+        val table = standingsService.retrieveLeagueTable(pin)
+
+        return ResponseEntity.ok(table)
+    }
 }

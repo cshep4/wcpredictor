@@ -22,7 +22,7 @@ internal class UserControllerTest {
     @InjectMocks
     lateinit var userController: UserController
 
-    val userInput = SignUpUser(firstName = "first", surname = "surname", email = "email", password = "pass", confirmPassword = "pass")
+    val userInput = SignUpUser(firstName = "first", surname = "surname", email = "email", password = "pass", confirmPassword = "pass", predictedWinner = "France")
     val user = User()
 
     @Test

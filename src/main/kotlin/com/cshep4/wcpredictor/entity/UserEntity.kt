@@ -14,7 +14,7 @@ data class UserEntity (
     var surname: String = "",
     var email: String? = null,
     var password: String? = null,
-    var predictedWinner: String? = null,
+    var predictedWinner: String = "",
     var score: Int = 0
 ){
 

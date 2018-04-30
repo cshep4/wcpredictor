@@ -85,4 +85,14 @@ object Queries {
             "  FROM users" +
             " ) as u" +
             " WHERE id = ?1"
+
+    const val QUERY_GET_LEAGUE_DETAILS = "SELECT users.id," +
+            "  users.firstname," +
+            "  users.surname," +
+            "  users.predictedwinner," +
+            "  users.score" +
+            " FROM users" +
+            " LEFT JOIN userleague u" +
+            " ON users.id = u.userid" +
+            " WHERE u.leagueid = ?1"
 }

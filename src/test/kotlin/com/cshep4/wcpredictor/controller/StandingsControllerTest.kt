@@ -82,4 +82,16 @@ internal class StandingsControllerTest {
         assertThat(result.statusCode, `is`(OK))
         assertThat(result.body, `is`(nullValue()))
     }
+
+    @Test
+    fun `'getLeagueTable' returns OK  with league table`() {
+        val table = listOf(LeagueTableUser())
+
+        whenever(standingsService.retrieveLeagueTable(1)).thenReturn(table)
+
+        val result = standingsController.getLeagueTable(1)
+
+        assertThat(result.statusCode, `is`(OK))
+        assertThat(result.body, `is`(table))
+    }
 }
