@@ -2,13 +2,17 @@ package com.cshep4.wcpredictor.service
 
 import com.cshep4.wcpredictor.data.SignUpUser
 import com.cshep4.wcpredictor.data.User
+import com.cshep4.wcpredictor.data.UserDetails
+import com.cshep4.wcpredictor.data.UserPasswords
 import com.cshep4.wcpredictor.entity.UserEntity
 import com.cshep4.wcpredictor.repository.UserRepository
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
+import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
@@ -34,6 +38,11 @@ internal class UserServiceTest {
 
     @InjectMocks
     private lateinit var userService: UserService
+
+    @Before
+    fun init() {
+        whenever(bCryptPasswordEncoder.matches(any(), any())).thenReturn(true)
+    }
 
     @Test
     fun `'loadUserByUsername' returns User instance from db`() {
@@ -125,7 +134,7 @@ internal class UserServiceTest {
 
         val result = userService.createUser(user)
 
-        val expectedResult = User(firstName = "first", surname = "name", email = email, password = "Pass123")
+        val expectedResult = User(firstName = "first", surname = "name", email = email, password = "Pass123", predictedWinner = "France")
 
         assertThat(result, Is(expectedResult))
         verify(userRepository).save(UserEntity.fromDto(user))
@@ -169,5 +178,145 @@ internal class UserServiceTest {
         val result = userService.retrieveUserByEmail("test")
 
         assertThat(result, Is(nullValue()))
+    }
+
+    @Test
+    fun `'updateUserPassword' does not update user if password is invalid`() {
+        val userPasswords = UserPasswords(id = 1, oldPassword = "Qwerty123", newPassword = "test", confirmPassword = "test")
+        val userEntity = UserEntity(id = 1, password = "oldPassword")
+
+        whenever(userRepository.findById(1)).thenReturn(Optional.of(userEntity))
+
+        val result = userService.updateUserPassword(userPasswords)
+
+        assertThat(result, Is(nullValue()))
+        verify(userRepository, times(0)).save(any(UserEntity::class.java))
+    }
+
+    @Test
+    fun `'updateUserPassword' does not update user if new passwords don't match`() {
+        val userPasswords = UserPasswords(id = 1, oldPassword = "Qwerty123", newPassword = "Qwerty123", confirmPassword = "Qwrty1")
+        val userEntity = UserEntity(id = 1, password = "oldPassword")
+
+        whenever(userRepository.findById(1)).thenReturn(Optional.of(userEntity))
+
+        val result = userService.updateUserPassword(userPasswords)
+
+        assertThat(result, Is(nullValue()))
+        verify(userRepository, times(0)).save(any(UserEntity::class.java))
+    }
+
+    @Test
+    fun `'updateUserPassword' does not update user if old password is incorrect`() {
+        val userPasswords = UserPasswords(id = 1, oldPassword = "Qwerty123", newPassword = "Qwerty123", confirmPassword = "Qwerty123")
+        val userEntity = UserEntity(id = 1, password = "oldPassword")
+
+        whenever(userRepository.findById(1)).thenReturn(Optional.of(userEntity))
+        whenever(bCryptPasswordEncoder.matches(userPasswords.oldPassword, userEntity.password)).thenReturn(false)
+
+        val result = userService.updateUserPassword(userPasswords)
+
+        assertThat(result, Is(nullValue()))
+        verify(userRepository, times(0)).save(any(UserEntity::class.java))
+    }
+
+    @Test
+    fun `'updateUserPassword' does not update user does not exist`() {
+        val userPasswords = UserPasswords(id = 1, oldPassword = "Qwerty123", newPassword = "Qwerty123", confirmPassword = "Qwerty123")
+
+        whenever(userRepository.findById(1)).thenReturn(Optional.empty())
+
+        val result = userService.updateUserPassword(userPasswords)
+
+        assertThat(result, Is(nullValue()))
+        verify(userRepository, times(0)).save(any(UserEntity::class.java))
+    }
+
+    @Test
+    fun `'updateUserPassword' updates user password`() {
+        val userPasswords = UserPasswords(id = 1, oldPassword = "Qwerty12", newPassword = "Qwerty123", confirmPassword = "Qwerty123")
+        val userEntity = UserEntity(id = 1, email = "test", password = "oldPassword")
+
+        whenever(userRepository.findById(1)).thenReturn(Optional.of(userEntity))
+
+        val newUserEntity = UserEntity(id = 1, email = "test", password = "newPassword")
+        whenever(bCryptPasswordEncoder.encode(userPasswords.newPassword)).thenReturn("newPassword")
+        whenever(userRepository.save(any(UserEntity::class.java))).thenReturn(newUserEntity)
+
+        val result = userService.updateUserPassword(userPasswords)
+
+        assertThat(result, Is(notNullValue()))
+        verify(userRepository, times(1)).save(any(UserEntity::class.java))
+        assertThat(result!!.password, Is("newPassword"))
+    }
+
+    @Test
+    fun `'updateUserDetails' does not update user if email is invalid`() {
+        val userDetails = UserDetails(id = 1, firstName = "First", surname = "Last", email = "this is an invalid email")
+        val userEntity = UserEntity(id = 1)
+
+        whenever(userRepository.findById(userDetails.id)).thenReturn(Optional.of(userEntity))
+
+        val result = userService.updateUserDetails(userDetails)
+
+        assertThat(result, Is(nullValue()))
+        verify(userRepository, times(0)).save(any(UserEntity::class.java))
+    }
+
+    @Test
+    fun `'updateUserDetails' does not update user if first name is blank`() {
+        val userDetails = UserDetails(id = 1, firstName = "", surname = "Last", email = email)
+        val userEntity = UserEntity(id = 1)
+
+        whenever(userRepository.findById(userDetails.id)).thenReturn(Optional.of(userEntity))
+        whenever(userRepository.findByEmail(userDetails.email)).thenReturn(Optional.empty())
+
+        val result = userService.updateUserDetails(userDetails)
+
+        assertThat(result, Is(nullValue()))
+        verify(userRepository, times(0)).save(any(UserEntity::class.java))
+    }
+
+    @Test
+    fun `'updateUserDetails' does not update user if surname is blank`() {
+        val userDetails = UserDetails(id = 1, firstName = "First", surname = "", email = email)
+        val userEntity = UserEntity(id = 1)
+
+        whenever(userRepository.findById(userDetails.id)).thenReturn(Optional.of(userEntity))
+        whenever(userRepository.findByEmail(userDetails.email)).thenReturn(Optional.empty())
+
+        val result = userService.updateUserDetails(userDetails)
+
+        assertThat(result, Is(nullValue()))
+        verify(userRepository, times(0)).save(any(UserEntity::class.java))
+    }
+
+    @Test
+    fun `'updateUserDetails' does not update user if user already exists with same email`() {
+        val userDetails = UserDetails(id = 1, firstName = "First", surname = "Last", email = email)
+        val userEntity = UserEntity(id = 5)
+
+        whenever(userRepository.findById(userDetails.id)).thenReturn(Optional.of(userEntity))
+        whenever(userRepository.findByEmail(userDetails.email)).thenReturn(Optional.of(userEntity))
+
+        val result = userService.updateUserDetails(userDetails)
+
+        assertThat(result, Is(nullValue()))
+        verify(userRepository, times(0)).save(any(UserEntity::class.java))
+    }
+
+    @Test
+    fun `'updateUserPassword' updates user details`() {
+        val userDetails = UserDetails(id = 1, firstName = "First", surname = "Last", email = email)
+        val userEntity = UserEntity(id = 1)
+
+        whenever(userRepository.findById(userDetails.id)).thenReturn(Optional.of(userEntity))
+        whenever(userRepository.findByEmail(userDetails.email)).thenReturn(Optional.empty())
+        whenever(userRepository.save(any(UserEntity::class.java))).thenReturn(userEntity)
+
+        val result = userService.updateUserDetails(userDetails)
+
+        assertThat(result, Is(notNullValue()))
+        verify(userRepository, times(1)).save(any(UserEntity::class.java))
     }
 }

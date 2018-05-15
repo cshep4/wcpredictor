@@ -136,4 +136,16 @@ internal class StandingsServiceTest {
 
         assertThat(result, `is`(expectedResult))
     }
+
+    @Test
+    fun `'retrieveOverallLeagueTable' get league table from db, sorts it descending by points and returns it`() {
+        val tableEntity = listOf(LeagueTableUserEntity(score = 44), LeagueTableUserEntity(score = 80))
+
+        whenever(leagueTableRepository.getOverallLeagueTable()).thenReturn(tableEntity)
+
+        val expectedResult = tableEntity.sortedByDescending { it.score }.map { it.toDto() }
+        val result = standingsService.retrieveOverallLeagueTable()
+
+        assertThat(result, `is`(expectedResult))
+    }
 }

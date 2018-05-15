@@ -2,6 +2,8 @@ package com.cshep4.wcpredictor.controller
 
 import com.cshep4.wcpredictor.data.SignUpUser
 import com.cshep4.wcpredictor.data.User
+import com.cshep4.wcpredictor.data.UserDetails
+import com.cshep4.wcpredictor.data.UserPasswords
 import com.cshep4.wcpredictor.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.*
@@ -47,5 +49,25 @@ class UserController {
     @PostMapping("/logout")
     fun logout() : ResponseEntity<User> {
         return ResponseEntity.ok().build()
+    }
+
+    @PutMapping("/update")
+    fun updateUserDetails(@RequestBody userDetails: UserDetails) : ResponseEntity<User> {
+        val user = userService.updateUserDetails(userDetails)
+
+        return when (user) {
+            null -> ResponseEntity.badRequest().build()
+            else -> ResponseEntity.noContent().build()
+        }
+    }
+
+    @PutMapping("/updatePassword")
+    fun updateUserPassword(@RequestBody userPasswords: UserPasswords) : ResponseEntity<User> {
+        val user = userService.updateUserPassword(userPasswords)
+
+        return when (user) {
+            null -> ResponseEntity.badRequest().build()
+            else -> ResponseEntity.noContent().build()
+        }
     }
 }

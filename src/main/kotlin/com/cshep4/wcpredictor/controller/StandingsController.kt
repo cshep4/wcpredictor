@@ -50,4 +50,11 @@ class StandingsController {
 
         return ResponseEntity.ok(table)
     }
+
+    @GetMapping("/overall")
+    fun getOverallLeagueTable() : ResponseEntity<List<LeagueTableUser>> {
+        val table = standingsService.retrieveOverallLeagueTable()
+
+        return ResponseEntity.ok(table)
+    }
 }

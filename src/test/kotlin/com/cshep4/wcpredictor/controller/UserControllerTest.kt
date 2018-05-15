@@ -2,6 +2,8 @@ package com.cshep4.wcpredictor.controller
 
 import com.cshep4.wcpredictor.data.SignUpUser
 import com.cshep4.wcpredictor.data.User
+import com.cshep4.wcpredictor.data.UserDetails
+import com.cshep4.wcpredictor.data.UserPasswords
 import com.cshep4.wcpredictor.service.UserService
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.nullValue
@@ -90,6 +92,54 @@ internal class UserControllerTest {
         val result = userController.logout()
 
         assertThat(result.statusCode, Is(OK))
+        assertThat(result.body, Is(nullValue()))
+    }
+
+    @Test
+    fun `'updateUserDetails' returns NO_CONTENT when user details are updated`() {
+        val userDetails = UserDetails()
+
+        whenever(userService.updateUserDetails(userDetails)).thenReturn(user)
+
+        val result = userController.updateUserDetails(userDetails)
+
+        assertThat(result.statusCode, Is(NO_CONTENT))
+        assertThat(result.body, Is(nullValue()))
+    }
+
+    @Test
+    fun `'updateUserDetails' returns BAD_REQUEST when user details are not updated`() {
+        val userDetails = UserDetails()
+
+        whenever(userService.updateUserDetails(userDetails)).thenReturn(null)
+
+        val result = userController.updateUserDetails(userDetails)
+
+        assertThat(result.statusCode, Is(BAD_REQUEST))
+        assertThat(result.body, Is(nullValue()))
+    }
+
+    @Test
+    fun `'updateUserPassword' returns NO_CONTENT when user password is updated`() {
+        val userPasswords = UserPasswords()
+
+        whenever(userService.updateUserPassword(userPasswords)).thenReturn(user)
+
+        val result = userController.updateUserPassword(userPasswords)
+
+        assertThat(result.statusCode, Is(NO_CONTENT))
+        assertThat(result.body, Is(nullValue()))
+    }
+
+    @Test
+    fun `'updateUserPassword' returns BAD_REQUEST when user password is not updated`() {
+        val userPasswords = UserPasswords()
+
+        whenever(userService.updateUserPassword(userPasswords)).thenReturn(null)
+
+        val result = userController.updateUserPassword(userPasswords)
+
+        assertThat(result.statusCode, Is(BAD_REQUEST))
         assertThat(result.body, Is(nullValue()))
     }
 }

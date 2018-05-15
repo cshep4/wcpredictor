@@ -3,6 +3,8 @@ package com.cshep4.wcpredictor.service
 
 import com.cshep4.wcpredictor.data.LoginUser
 import com.cshep4.wcpredictor.data.SignUpUser
+import com.cshep4.wcpredictor.data.User
+import com.cshep4.wcpredictor.data.UserPasswords
 import com.cshep4.wcpredictor.entity.UserEntity
 import com.cshep4.wcpredictor.extension.isValidEmailAddress
 import com.cshep4.wcpredictor.extension.isValidPassword
@@ -32,7 +34,7 @@ class UserService : UserDetailsService {
         return LoginUser(user.id!!, user.email!!, user.password!!)
     }
 
-    fun createUser(signUpUser: SignUpUser): com.cshep4.wcpredictor.data.User? {
+    fun createUser(signUpUser: SignUpUser): User? {
         signUpUser.score = 0
 
         return when {
@@ -49,11 +51,55 @@ class UserService : UserDetailsService {
         }
     }
 
-    fun retrieveUserById(id: Long): com.cshep4.wcpredictor.data.User? = userRepository.findById(id)
+    fun retrieveUserById(id: Long): User? = userRepository.findById(id)
             .map { it.toDto() }
             .orElse(null)
 
-    fun retrieveUserByEmail(email: String): com.cshep4.wcpredictor.data.User? = userRepository.findByEmail(email)
+    fun retrieveUserByEmail(email: String): User? = userRepository.findByEmail(email)
             .map { it.toDto() }
             .orElse(null)
+
+    fun updateUserDetails(userDetails: com.cshep4.wcpredictor.data.UserDetails): User? {
+        val user = userRepository.findById(userDetails.id)
+                .map { it.toDto() }
+                .orElse(null) ?: return null
+
+        return when {
+            !userDetails.email.isValidEmailAddress() -> null
+            emailTakenByDifferentUser(userDetails.id, userDetails.email) -> null
+            userDetails.firstName.isBlank() -> null
+            userDetails.surname.isBlank() -> null
+            else -> {
+                user.email = userDetails.email
+                user.firstName = userDetails.firstName
+                user.surname = userDetails.surname
+                userRepository.save(UserEntity.fromDto(user)).toDto()
+            }
+        }
+    }
+
+    private fun emailTakenByDifferentUser(id: Long, email: String) : Boolean {
+        userRepository.findByEmail(email)
+                .filter{ it.id != id }
+                .map { it.toDto() }
+                .orElse(null) ?: return false
+
+        return true
+    }
+
+    fun updateUserPassword(userPasswords: UserPasswords): User? {
+        val user = userRepository.findById(userPasswords.id)
+                .map { it.toDto() }
+                .orElse(null) ?: return null
+
+        return when {
+            !bCryptPasswordEncoder.matches(userPasswords.oldPassword, user.password) -> null
+            userPasswords.newPassword != userPasswords.confirmPassword -> null
+            !userPasswords.newPassword.isValidPassword() -> null
+            else -> {
+                user.password = bCryptPasswordEncoder.encode(userPasswords.newPassword)
+                userRepository.save(UserEntity.fromDto(user)).toDto()
+            }
+        }
+    }
 }

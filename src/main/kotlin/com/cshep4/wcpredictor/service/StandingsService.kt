@@ -93,4 +93,8 @@ class StandingsService {
     fun retrieveLeagueTable(pin: Long) : List<LeagueTableUser> = leagueTableRepository.getLeagueTable(pin)
             .sortedByDescending { it.score }
             .map { it.toDto() }
+
+    fun retrieveOverallLeagueTable() : List<LeagueTableUser> = leagueTableRepository.getOverallLeagueTable()
+            .sortedByDescending { it.score }
+            .map { it.toDto() }
 }
