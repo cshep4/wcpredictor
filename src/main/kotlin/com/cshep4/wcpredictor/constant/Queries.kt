@@ -1,5 +1,7 @@
 package com.cshep4.wcpredictor.constant
 
+import com.cshep4.wcpredictor.constant.RoundConstants.FINAL_MATCHDAY
+
 object Queries {
     const val QUERY_IS_TOKEN_USED = "SELECT used " +
             "FROM Token " +
@@ -102,4 +104,17 @@ object Queries {
             "  predictedwinner," +
             "  score" +
             " FROM users"
+
+    const val QUERY_GET_ALL_MATCHES_WITH_PREDICTIONS = "SELECT prediction.id, prediction.userid," +
+            "  match.hteam, match.ateam, match.hgoals, match.agoals," +
+            "  prediction.hgoals as hPredictedGoals, prediction.agoals as aPredictedGoals," +
+            "  match.matchGroup as group, match.matchday" +
+            " FROM match" +
+            " INNER JOIN prediction" +
+            " ON match.id = prediction.matchid" +
+            " ORDER BY prediction.userid"
+
+    const val QUERY_GET_FINAL = "SELECT *" +
+            " FROM Match" +
+            " WHERE matchday=" + FINAL_MATCHDAY
 }

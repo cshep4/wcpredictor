@@ -3,6 +3,9 @@ package com.cshep4.wcpredictor.controller
 import com.cshep4.wcpredictor.data.Match
 import com.cshep4.wcpredictor.data.PredictedMatch
 import com.cshep4.wcpredictor.service.FixturesService
+import com.cshep4.wcpredictor.service.UserScoreService
+import com.nhaarman.mockito_kotlin.times
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.nullValue
@@ -20,6 +23,9 @@ internal class FixturesControllerTest {
     @Mock
     private lateinit var fixturesService: FixturesService
 
+    @Mock
+    lateinit var userScoreService: UserScoreService
+
     @InjectMocks
     private lateinit var fixturesController: FixturesController
 
@@ -28,20 +34,22 @@ internal class FixturesControllerTest {
         val matches = listOf(Match())
         whenever(fixturesService.update()).thenReturn(matches)
 
-        val result = fixturesController.updateFixtures()
+        val result = fixturesController.updateFixtures(true)
 
         assertThat(result.statusCode, Is(OK))
         assertThat(result.body, Is(matches))
+        verify(userScoreService).updateScores()
     }
 
     @Test
     fun `'updateFixtures' returns BAD_REQUEST fixtures are not updated`() {
         whenever(fixturesService.update()).thenReturn(emptyList())
 
-        val result = fixturesController.updateFixtures()
+        val result = fixturesController.updateFixtures(true)
 
         assertThat(result.statusCode, Is(BAD_REQUEST))
         assertThat(result.body, Is(CoreMatchers.nullValue()))
+        verify(userScoreService, times(0)).updateScores()
     }
 
     @Test

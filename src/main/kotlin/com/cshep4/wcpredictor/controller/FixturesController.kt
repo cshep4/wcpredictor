@@ -3,6 +3,7 @@ package com.cshep4.wcpredictor.controller
 import com.cshep4.wcpredictor.data.Match
 import com.cshep4.wcpredictor.data.PredictedMatch
 import com.cshep4.wcpredictor.service.FixturesService
+import com.cshep4.wcpredictor.service.UserScoreService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.ResponseEntity
@@ -14,9 +15,18 @@ class FixturesController {
     @Autowired
     lateinit var fixturesService: FixturesService
 
+    @Autowired
+    lateinit var userScoreService: UserScoreService
+
+    private fun doScoreUpdate(score: Boolean?): Boolean = score != null && score
+
     @PutMapping("/update")
-    fun updateFixtures() : ResponseEntity<List<Match>> {
+    fun updateFixtures(@RequestParam("score") score: Boolean?) : ResponseEntity<List<Match>> {
         val fixtures = fixturesService.update()
+
+        if (!fixtures.isEmpty() && doScoreUpdate(score)) {
+            userScoreService.updateScores()
+        }
 
         return when {
             fixtures.isEmpty() -> ResponseEntity.status(BAD_REQUEST).build()

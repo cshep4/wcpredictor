@@ -22,4 +22,8 @@ class ScoreService {
 
         return UserRank(id = uId, rank = rank, score = score)
     }
+
+    fun updateUserScores() {
+
+    }
 }

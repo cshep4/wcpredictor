@@ -27,27 +27,21 @@ class LeagueTableService {
     fun getCurrentStandings() : Standings {
         val matches = fixturesService.retrieveAllMatches()
 
-        val groupMatches = matches.filter { it.matchday <= FINAL_GROUP_MATCHDAY }
-        val knockoutMatches = matches.filter { it.matchday > FINAL_GROUP_MATCHDAY }
-
-        val currentStandings = createStandingsFromMatches(groupMatches)
-
-        val knockoutStandings = knockoutFixturesCollector.collect(knockoutMatches)
-
-        return Standings(
-                standings = currentStandings,
-                knockoutStandings = knockoutStandings
-        )
+        return getStandingsFromMatches(matches)
     }
 
     fun getPredictedStandings(id: Long): Standings {
         val matches = fixturesService.retrieveAllMatchesWithPredictions(id)
                 .map { it.toMatch() }
 
+        return getStandingsFromMatches(matches)
+    }
+
+    private fun getStandingsFromMatches(matches: List<Match>): Standings {
         val groupMatches = matches.filter { it.matchday <= FINAL_GROUP_MATCHDAY }
         val knockoutMatches = matches.filter { it.matchday > FINAL_GROUP_MATCHDAY }
 
-        val currentStandings = createStandingsFromMatches(groupMatches)
+        val currentStandings = createGroupStandingsFromMatches(groupMatches)
 
         val knockoutStandings = knockoutFixturesCollector.collect(knockoutMatches)
 
@@ -57,7 +51,7 @@ class LeagueTableService {
         )
     }
 
-    private fun createStandingsFromMatches(matches: List<Match>) : List<LeagueTable> {
+    fun createGroupStandingsFromMatches(matches: List<Match>) : List<LeagueTable> {
         val groups = groupCreator.create()
 
         return leagueTableCalculator.calculate(matches, groups)

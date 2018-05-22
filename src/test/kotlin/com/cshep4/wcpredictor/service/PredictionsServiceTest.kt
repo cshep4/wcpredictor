@@ -22,7 +22,7 @@ internal class PredictionsServiceTest {
 
     @Test
     fun `'update' returns list of predictions when successfully updated to db`() {
-        val predictions = listOf(Prediction())
+        val predictions = listOf(Prediction(aGoals = 0, hGoals = 0))
         val predictionEntities = predictions.map { PredictionEntity.fromDto(it) }
 
         whenever(predictionsRepository.saveAll(predictionEntities)).thenReturn(predictionEntities)
