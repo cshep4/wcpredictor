@@ -9,6 +9,7 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.any
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
@@ -26,11 +27,11 @@ internal class JoinLeagueServiceTest {
         val userLeague = UserLeague()
         val userLeagueEntity = UserLeagueEntity.fromDto(userLeague)
 
-        whenever(userLeagueRepository.save(userLeagueEntity)).thenReturn(userLeagueEntity)
+        whenever(userLeagueRepository.save(any(UserLeagueEntity::class.java))).thenReturn(userLeagueEntity)
 
         val result = joinLeagueService.joinLeague(userLeague)
 
-        verify(userLeagueRepository).save(userLeagueEntity)
+        verify(userLeagueRepository).save(any(UserLeagueEntity::class.java))
         assertThat(result, `is`(userLeague))
     }
 }

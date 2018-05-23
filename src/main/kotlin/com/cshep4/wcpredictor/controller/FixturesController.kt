@@ -4,6 +4,7 @@ import com.cshep4.wcpredictor.data.Match
 import com.cshep4.wcpredictor.data.PredictedMatch
 import com.cshep4.wcpredictor.service.FixturesService
 import com.cshep4.wcpredictor.service.UserScoreService
+import kotlinx.coroutines.experimental.async
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.ResponseEntity
@@ -25,7 +26,9 @@ class FixturesController {
         val fixtures = fixturesService.update()
 
         if (!fixtures.isEmpty() && doScoreUpdate(score)) {
-            userScoreService.updateScores()
+            async {
+                userScoreService.updateScores()
+            }
         }
 
         return when {

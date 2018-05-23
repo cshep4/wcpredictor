@@ -22,6 +22,12 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
+kotlin {
+	experimental {
+		coroutines 'enable'
+	}
+}
+
 group = 'com.cshep4'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
@@ -67,4 +73,5 @@ dependencies {
 	testCompile('org.springframework.security:spring-security-test')
 	testCompile group: 'com.nhaarman', name: 'mockito-kotlin', version: '1.5.0'
 	testCompile "io.mockk:mockk:1.7.15"
+	compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21"
 }

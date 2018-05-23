@@ -38,7 +38,7 @@ internal class UserScoreServiceTest {
         val userEntities = listOf(UserEntity())
         val users = userEntities.map { it.toDto() }
 
-        val predictedMatchEntities = listOf(MatchPredictionResultEntity())
+        val predictedMatchEntities = listOf(MatchPredictionResultEntity(hGoals = 1, aGoals = 1))
         val predictedMatches = predictedMatchEntities.map { it.toDto() }
 
         whenever(userRepository.findAll()).thenReturn(userEntities)
