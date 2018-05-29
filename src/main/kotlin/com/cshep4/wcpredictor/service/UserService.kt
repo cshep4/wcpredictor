@@ -27,7 +27,9 @@ class UserService : UserDetailsService {
 
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(email: String): UserDetails? {
-        val user = userRepository.findByEmail(email)
+        val caseInsensitiveEmail = email.toLowerCase()
+
+        val user = userRepository.findByEmail(caseInsensitiveEmail)
                 .map { it.toDto() }
                 .orElse(null) ?: throw UsernameNotFoundException("User not found")
 
@@ -36,6 +38,8 @@ class UserService : UserDetailsService {
 
     fun createUser(signUpUser: SignUpUser): User? {
         signUpUser.score = 0
+
+        signUpUser.email = signUpUser.email.toLowerCase()
 
         return when {
             !signUpUser.email.isValidEmailAddress() -> null
@@ -63,6 +67,8 @@ class UserService : UserDetailsService {
         val user = userRepository.findById(userDetails.id)
                 .map { it.toDto() }
                 .orElse(null) ?: return null
+
+        userDetails.email = userDetails.email.toLowerCase()
 
         return when {
             !userDetails.email.isValidEmailAddress() -> null
