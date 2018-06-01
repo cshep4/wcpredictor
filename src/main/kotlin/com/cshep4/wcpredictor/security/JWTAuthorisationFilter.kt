@@ -33,7 +33,7 @@ class JWTAuthorisationFilter(authManager: AuthenticationManager, private val use
         val authentication = getAuthentication(req)
 
         if (authentication != null) {
-            usedTokenService.addUsedToken(header)
+//            usedTokenService.addUsedToken(header)
             if (req.requestURI != LOGOUT_URL) {
                 res.generateJwtToken(authentication.principal.toString(), req.requestURI)
             }
@@ -46,9 +46,9 @@ class JWTAuthorisationFilter(authManager: AuthenticationManager, private val use
     private fun getAuthentication(request: HttpServletRequest): UsernamePasswordAuthenticationToken? {
         val token = request.getHeader(HEADER_STRING) ?: return null
 
-        if (usedTokenService.hasTokenBeenUsed(token)) {
-            return null
-        }
+//        if (usedTokenService.hasTokenBeenUsed(token)) {
+//            return null
+//        }
 
         val user = Jwts.parser()
                 .setSigningKey(SECRET.toByteArray())

@@ -16,11 +16,12 @@ class TokenController {
 
     @PutMapping("/used")
     fun setUsedToken(@RequestBody token: String) : ResponseEntity<String> {
-        val result = usedTokenService.setUsedToken(token)
-
-        return when {
-            result > 0 -> ResponseEntity.ok().build()
-            else -> ResponseEntity.badRequest().build()
-        }
+//        val result = usedTokenService.setUsedToken(token)
+//
+//        return when {
+//            result > 0 -> ResponseEntity.ok().build()
+//            else -> ResponseEntity.badRequest().build()
+//        }
+        return ResponseEntity.ok().build()
     }
 }
