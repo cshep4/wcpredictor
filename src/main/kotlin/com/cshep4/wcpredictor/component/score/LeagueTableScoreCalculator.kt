@@ -16,11 +16,19 @@ class LeagueTableScoreCalculator {
     private lateinit var leagueTableService: LeagueTableService
 
     fun calculate(users: List<User>, predictedMatches: List<MatchPredictionResult>): List<User> {
-        val standings = leagueTableService.getCurrentStandings()
+        if (isGroupStageFinished(predictedMatches)) {
+            val standings = leagueTableService.getCurrentStandings()
 
-        users.forEach { updateScore(it, standings, predictedMatches) }
+            users.forEach { updateScore(it, standings, predictedMatches) }
+        }
 
         return users
+    }
+
+    private fun isGroupStageFinished(predictedMatches: List<MatchPredictionResult>): Boolean {
+        val predictedGroupMatches = predictedMatches.filter { it.matchday <= FINAL_GROUP_MATCHDAY }
+
+        return predictedGroupMatches.none{ it.hGoals == null && it.aGoals == null }
     }
 
     private fun updateScore(user: User, standings: Standings, predictedMatches: List<MatchPredictionResult>) {

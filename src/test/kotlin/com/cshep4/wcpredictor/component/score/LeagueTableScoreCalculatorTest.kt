@@ -30,13 +30,11 @@ internal class LeagueTableScoreCalculatorTest {
     @Test
     fun `'calculate' gets a league table of the current scores`() {
         val users = listOf(User(id = 1))
-        val predictedMatches = listOf(MatchPredictionResult(userId = 1))
-        val matches = predictedMatches.map { it.toPredictedMatch() }
+        val predictedMatches = listOf(MatchPredictionResult(userId = 1, matchday = 4))
         val groups = listOf(LeagueTable())
         val standings = Standings(standings = groups)
 
         whenever(leagueTableService.getCurrentStandings()).thenReturn(standings)
-        whenever(leagueTableService.createGroupStandingsFromMatches(matches)).thenReturn(groups)
 
         leagueTableScoreCalculator.calculate(users, predictedMatches)
 
@@ -47,7 +45,7 @@ internal class LeagueTableScoreCalculatorTest {
     @Test
     fun `'calculate' loops through each user and creates a league table based on their predicted scores`() {
         val users = listOf(User(id = 1), User(id = 2), User(id = 3))
-        val predictedMatches = listOf(MatchPredictionResult(userId = 1), MatchPredictionResult(userId = 2), MatchPredictionResult(userId = 3))
+        val predictedMatches = listOf(MatchPredictionResult(userId = 1, matchday = 4), MatchPredictionResult(userId = 2, matchday = 4), MatchPredictionResult(userId = 3, matchday = 4))
         val groups = listOf(LeagueTable())
         val standings = Standings(standings = groups)
 
@@ -62,7 +60,7 @@ internal class LeagueTableScoreCalculatorTest {
     @Test
     fun `'calculate' loops through each user and compares their league table to the real one and awards 5 points for matching group positions, then returns the list of users`() {
         val users = listOf(User(id = 1, score = 0), User(id = 2, score = 0), User(id = 3, score = 0))
-        val predictedMatches = listOf(MatchPredictionResult(userId = 1), MatchPredictionResult(userId = 2), MatchPredictionResult(userId = 3))
+        val predictedMatches = listOf(MatchPredictionResult(userId = 1, matchday = 4), MatchPredictionResult(userId = 2, matchday = 4), MatchPredictionResult(userId = 3, matchday = 4))
 
         val groups1 = listOf(
                 LeagueTable(group = 'A', table = mutableListOf(
@@ -119,5 +117,20 @@ internal class LeagueTableScoreCalculatorTest {
         assertThat(result[0].score, `is`(allRight))
         assertThat(result[1].score, `is`(twoRight))
         assertThat(result[2].score, `is`(noneRight))
+    }
+
+    @Test
+    fun `'calculate' does not update if the group stage hasn't finished`() {
+        val users = listOf(User(id = 1, score = 0), User(id = 2, score = 0), User(id = 3, score = 0))
+        val predictedMatches = listOf(
+                MatchPredictionResult(userId = 1, matchday = 1, hGoals = 1, aGoals = 2),
+                MatchPredictionResult(userId = 2, matchday = 2, hGoals = 3, aGoals = 0),
+                MatchPredictionResult(userId = 3, matchday = 3, hGoals = null, aGoals = null)
+        )
+
+        val result = leagueTableScoreCalculator.calculate(users, predictedMatches)
+
+        verify(leagueTableService, times(0)).getCurrentStandings()
+        verify(leagueTableService, times(0)).createGroupStandingsFromMatches(any())
     }
 }
