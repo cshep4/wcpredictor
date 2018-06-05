@@ -9,4 +9,5 @@ object SecurityConstants {
     const val FIXTURES_UPDATE_URL = "/fixtures/update"
     const val LOGOUT_URL = "/users/logout"
     const val SET_USED_TOKEN_URL = "/token/used"
+    const val PASSWORD_RESET_EXPIRATION_TIME: Long = 86400000 // 24 hours
 }

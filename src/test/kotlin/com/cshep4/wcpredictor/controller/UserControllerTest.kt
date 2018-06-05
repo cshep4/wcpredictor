@@ -1,10 +1,9 @@
 package com.cshep4.wcpredictor.controller
 
-import com.cshep4.wcpredictor.data.SignUpUser
-import com.cshep4.wcpredictor.data.User
-import com.cshep4.wcpredictor.data.UserDetails
-import com.cshep4.wcpredictor.data.UserPasswords
+import com.cshep4.wcpredictor.data.*
+import com.cshep4.wcpredictor.service.ResetPasswordService
 import com.cshep4.wcpredictor.service.UserService
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -20,6 +19,9 @@ import org.hamcrest.CoreMatchers.`is` as Is
 internal class UserControllerTest {
     @Mock
     lateinit var userService: UserService
+
+    @Mock
+    lateinit var resetPasswordService: ResetPasswordService
 
     @InjectMocks
     lateinit var userController: UserController
@@ -141,5 +143,28 @@ internal class UserControllerTest {
 
         assertThat(result.statusCode, Is(BAD_REQUEST))
         assertThat(result.body, Is(nullValue()))
+    }
+
+    @Test
+    fun `'sendPasswordResetEmail' sends reset password email and returns OK`() {
+        val email = "test email"
+        val result = userController.sendPasswordResetEmail(email)
+
+        verify(resetPasswordService).sendPasswordRestEmail(email)
+        
+        assertThat(result.statusCode, Is(OK))
+    }
+
+    @Test
+    fun `'resetPassword' calls the reset password service and returns the message`() {
+        val response = "password updated"
+        val resetPassword = ResetPassword()
+
+        whenever(resetPasswordService.resetPassword(resetPassword)).thenReturn(response)
+
+        val result = userController.resetPassword(resetPassword)
+
+        assertThat(result.statusCode, Is(OK))
+        assertThat(result.body, Is(response))
     }
 }

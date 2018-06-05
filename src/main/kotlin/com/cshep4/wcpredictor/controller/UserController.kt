@@ -1,9 +1,7 @@
 package com.cshep4.wcpredictor.controller
 
-import com.cshep4.wcpredictor.data.SignUpUser
-import com.cshep4.wcpredictor.data.User
-import com.cshep4.wcpredictor.data.UserDetails
-import com.cshep4.wcpredictor.data.UserPasswords
+import com.cshep4.wcpredictor.data.*
+import com.cshep4.wcpredictor.service.ResetPasswordService
 import com.cshep4.wcpredictor.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.*
@@ -15,6 +13,9 @@ import org.springframework.web.bind.annotation.*
 class UserController {
     @Autowired
     lateinit var userService: UserService
+
+    @Autowired
+    lateinit var resetPasswordService: ResetPasswordService
 
     @PostMapping("/sign-up")
     fun signUp(@RequestBody signUpUser: SignUpUser) : ResponseEntity<User> {
@@ -69,5 +70,19 @@ class UserController {
             null -> ResponseEntity.badRequest().build()
             else -> ResponseEntity.noContent().build()
         }
+    }
+
+    @PostMapping("/sendResetPassword")
+    fun sendPasswordResetEmail(@RequestBody email: String) : ResponseEntity<String> {
+        resetPasswordService.sendPasswordRestEmail(email)
+
+        return ResponseEntity.ok().build()
+    }
+
+    @PostMapping("/resetPassword")
+    fun resetPassword(@ModelAttribute resetPassword: ResetPassword) : ResponseEntity<String> {
+        val response = resetPasswordService.resetPassword(resetPassword)
+
+        return ResponseEntity.ok().body(response)
     }
 }

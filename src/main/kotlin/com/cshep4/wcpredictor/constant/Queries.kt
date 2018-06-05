@@ -117,4 +117,13 @@ object Queries {
     const val QUERY_GET_FINAL = "SELECT *" +
             " FROM Match" +
             " WHERE matchday=" + FINAL_MATCHDAY
+
+    const val QUERY_SET_USER_SIGNATURE = "UPDATE users" +
+            " SET signature = ?1 " +
+            " WHERE email = ?2"
+
+    const val QUERY_RESET_USER_PASSWORD = "UPDATE users" +
+            " SET password = ?1" +
+            " WHERE email = ?2" +
+            " AND signature = ?3"
 }
