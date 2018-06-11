@@ -1,20 +1,38 @@
 package com.cshep4.wcpredictor.service
 
+import com.cshep4.wcpredictor.data.Match
 import com.cshep4.wcpredictor.data.Prediction
 import com.cshep4.wcpredictor.entity.PredictionEntity
 import com.cshep4.wcpredictor.repository.PredictionsRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.LocalDateTime
 
 @Service
 class PredictionsService {
     @Autowired
     private lateinit var predictionsRepository: PredictionsRepository
 
+    @Autowired
+    private lateinit var fixturesService: FixturesService
+
+    private lateinit var matches: List<Match>
+
     fun savePredictions(predictions: List<Prediction>) : List<Prediction> {
-        val predictionEntities = predictions.map { PredictionEntity.fromDto(it) }
+        matches = fixturesService.retrieveAllMatches()
+
+        val predictionEntities = predictions
+                .filter { matchYetToPlay(it.matchId!!) }
+                .map { PredictionEntity.fromDto(it) }
 
         return predictionsRepository.saveAll(predictionEntities).map { it.toDto() }
+    }
+
+    private fun matchYetToPlay(id: Long) : Boolean {
+        return matches.first { it.id == id }
+                .dateTime!!
+                .isAfter(LocalDateTime.now(Clock.systemUTC()))
     }
 
     fun retrievePredictionsByUserId(id: Long) : List<Prediction> = predictionsRepository.findByUserId(id).map { it.toDto() }
