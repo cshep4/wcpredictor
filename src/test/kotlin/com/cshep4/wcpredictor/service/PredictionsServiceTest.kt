@@ -42,6 +42,23 @@ internal class PredictionsServiceTest {
     }
 
     @Test
+    fun `'update' only saves predictions for matches that haven't played`() {
+        val dateTime = LocalDateTime.now().minusDays(1)
+        val dateTime2 = LocalDateTime.now().plusDays(1)
+        val predictions = listOf(Prediction(aGoals = 0, hGoals = 0, matchId = 1), Prediction(aGoals = 0, hGoals = 0, matchId = 2))
+        val predictionEntities = listOf(PredictionEntity.fromDto(predictions[1]))
+        val matches = listOf(Match(id = 1, dateTime = dateTime), Match(id = 2, dateTime = dateTime2))
+
+        whenever(fixturesService.retrieveAllMatches()).thenReturn(matches)
+        whenever(predictionsRepository.saveAll(predictionEntities)).thenReturn(predictionEntities)
+
+        val result = predictionsService.savePredictions(predictions)
+
+        assertThat(result.size, `is`(1))
+        assertThat(result[0], `is`(predictions[1]))
+    }
+
+    @Test
     fun `'update' returns empty list when not successfully stored to db`() {
         val dateTime = LocalDateTime.now().plusDays(1)
         val dateTime2 = LocalDateTime.now().plusDays(1)

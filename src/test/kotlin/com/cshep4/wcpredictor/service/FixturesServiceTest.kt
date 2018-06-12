@@ -1,17 +1,20 @@
 package com.cshep4.wcpredictor.service
 
 import com.cshep4.wcpredictor.component.fixtures.FixtureFormatter
+import com.cshep4.wcpredictor.component.fixtures.OverrideMatchScore
 import com.cshep4.wcpredictor.component.fixtures.PredictionMerger
 import com.cshep4.wcpredictor.constant.APIConstants.API_KEY
 import com.cshep4.wcpredictor.constant.APIConstants.API_URL
 import com.cshep4.wcpredictor.constant.APIConstants.HEADER_KEY
 import com.cshep4.wcpredictor.data.Match
+import com.cshep4.wcpredictor.data.OverrideMatch
 import com.cshep4.wcpredictor.data.Prediction
 import com.cshep4.wcpredictor.data.api.FixturesApiResult
 import com.cshep4.wcpredictor.entity.MatchEntity
 import com.cshep4.wcpredictor.repository.FixturesRepository
 import com.cshep4.wcpredictor.service.fixtures.FixturesApiService
 import com.cshep4.wcpredictor.service.fixtures.UpdateFixturesService
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
@@ -41,6 +44,12 @@ internal class FixturesServiceTest {
     @Mock
     private lateinit var predictionMerger: PredictionMerger
 
+    @Mock
+    private lateinit var overrideMatchService: OverrideMatchService
+
+    @Mock
+    private lateinit var overrideMatchScore: OverrideMatchScore
+
     @InjectMocks
     private lateinit var fixturesService: FixturesService
 
@@ -48,12 +57,17 @@ internal class FixturesServiceTest {
     fun `'update' returns list of matches when successfully updated to db`() {
         val fixturesApiResult = FixturesApiResult()
         val matches = listOf(Match())
+        val overrides = listOf(OverrideMatch())
 
         whenever(fixtureApiService.retrieveFixtures(API_URL, HEADER_KEY, API_KEY)).thenReturn(fixturesApiResult)
         whenever(fixtureFormatter.format(fixturesApiResult)).thenReturn(matches)
         whenever(updateFixturesService.update(matches)).thenReturn(matches)
+        whenever(overrideMatchService.retrieveAllOverriddenMatches()).thenReturn(overrides)
+        whenever(overrideMatchScore.update(matches, overrides)).thenReturn(matches)
 
         val result = fixturesService.update()
+
+        verify(overrideMatchScore).update(matches, overrides)
 
         assertThat(result, Is(matches))
     }
@@ -86,7 +100,6 @@ internal class FixturesServiceTest {
 
         whenever(fixtureApiService.retrieveFixtures(API_URL, HEADER_KEY, API_KEY)).thenReturn(fixturesApiResult)
         whenever(fixtureFormatter.format(fixturesApiResult)).thenReturn(matches)
-        whenever(updateFixturesService.update(matches)).thenReturn(emptyList())
 
         val result = fixturesService.update()
 

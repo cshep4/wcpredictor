@@ -1,6 +1,7 @@
 package com.cshep4.wcpredictor.service
 
 import com.cshep4.wcpredictor.component.fixtures.FixtureFormatter
+import com.cshep4.wcpredictor.component.fixtures.OverrideMatchScore
 import com.cshep4.wcpredictor.component.fixtures.PredictionMerger
 import com.cshep4.wcpredictor.constant.APIConstants.API_KEY
 import com.cshep4.wcpredictor.constant.APIConstants.API_URL
@@ -33,12 +34,22 @@ class FixturesService {
     @Autowired
     private lateinit var predictionsService: PredictionsService
 
+    @Autowired
+    private lateinit var overrideMatchService: OverrideMatchService
+
+    @Autowired
+    private lateinit var overrideMatchScore: OverrideMatchScore
+
     fun update(): List<Match> {
         val apiResult = fixtureApiService.retrieveFixtures(API_URL, HEADER_KEY, API_KEY) ?: return emptyList()
 
         val matches = fixtureFormatter.format(apiResult)
 
-        return updateFixturesService.update(matches)
+        val overrides = overrideMatchService.retrieveAllOverriddenMatches()
+
+        val finalScores = overrideMatchScore.update(matches, overrides)
+
+        return updateFixturesService.update(finalScores)
     }
 
     fun retrieveAllMatches() : List<Match> = fixturesRepository.findAll().map { it.toDto() }
