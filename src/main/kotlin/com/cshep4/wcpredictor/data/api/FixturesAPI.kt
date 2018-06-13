@@ -43,8 +43,8 @@ data class Fixture(val _links: ResultLinks? = null,
             id = id,
             hTeam = this.homeTeamName,
             aTeam = this.awayTeamName,
-            hGoals = this.result?.goalsHomeTeam,
-            aGoals = this.result?.goalsAwayTeam,
+            hGoals = getHomeGoals(),
+            aGoals = getAwayGoals(),
             played = getPlayed(),
             group = getGroup(),
             dateTime = LocalDateTime.parse(this.date, DateTimeFormatter.ISO_DATE_TIME),
@@ -58,6 +58,20 @@ data class Fixture(val _links: ResultLinks? = null,
         }
     }
 
+    private fun getHomeGoals(): Int? {
+        return when {
+            this.result?.extraTime != null -> this.result.extraTime.goalsHomeTeam
+            else -> this.result?.goalsHomeTeam
+        }
+    }
+
+    private fun getAwayGoals(): Int? {
+        return when {
+            this.result?.extraTime != null -> this.result.extraTime.goalsAwayTeam
+            else -> this.result?.goalsAwayTeam
+        }
+    }
+
     private fun getGroup() : Char? {
         return when {
             matchday <= 3 -> TeamGroups.groupMap[homeTeamName]
@@ -68,7 +82,9 @@ data class Fixture(val _links: ResultLinks? = null,
 
 data class MatchResult(val goalsHomeTeam:Int? = null,
                        val goalsAwayTeam:Int? = null,
-                       val halfTime: MatchResult? = null)
+                       val halfTime: MatchResult? = null,
+                       val extraTime: MatchResult? = null,
+                       val penaltyShootout: MatchResult? = null)
 
 data class Odds(val homeWin:Double = 0.0,
                 val draw:Double = 0.0,

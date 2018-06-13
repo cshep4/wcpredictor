@@ -2,6 +2,7 @@ package com.cshep4.wcpredictor.component.fixtures
 
 import com.cshep4.wcpredictor.data.api.Fixture
 import com.cshep4.wcpredictor.data.api.FixturesApiResult
+import com.cshep4.wcpredictor.data.api.MatchResult
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import java.time.LocalDateTime
@@ -13,7 +14,8 @@ internal class FixtureFormatterTest {
 
     @Test
     fun `'format' returns list of matches`() {
-        val match = Fixture(homeTeamName = "Russia", date = "2000-01-01T12:00:00Z")
+        val matchResult = MatchResult(goalsHomeTeam = 1, goalsAwayTeam = 1)
+        val match = Fixture(homeTeamName = "Russia", date = "2000-01-01T12:00:00Z", result = matchResult)
 
         val apiResult = FixturesApiResult(fixtures = arrayOf(match,match,match,match))
 
@@ -27,13 +29,27 @@ internal class FixtureFormatterTest {
         assertThat(result[0].aTeam, Is(match.awayTeamName))
         assertThat(result[0].hGoals, Is(match.result?.goalsHomeTeam))
         assertThat(result[0].aGoals, Is(match.result?.goalsAwayTeam))
-        assertThat(result[0].played, Is(0))
+        assertThat(result[0].played, Is(1))
         assertThat(result[0].group, Is('A'))
         assertThat(result[0].dateTime, Is(expectedDateTime))
         assertThat(result[0].matchday, Is(match.matchday))
         assertThat(result[1].id, Is(2L))
         assertThat(result[2].id, Is(3L))
         assertThat(result[3].id, Is(4L))
+    }
+
+    @Test
+    fun `'format' sets goals to be after extra time if played `() {
+        val matchResult = MatchResult(goalsHomeTeam = 1, goalsAwayTeam = 1, extraTime = MatchResult(goalsHomeTeam = 2, goalsAwayTeam = 3))
+        val match = Fixture(homeTeamName = "Russia", date = "2000-01-01T12:00:00Z", result = matchResult)
+
+        val apiResult = FixturesApiResult(fixtures = arrayOf(match))
+
+        val result = fixtureFormatter.format(apiResult)
+
+        assertThat(result[0].id, Is(1L))
+        assertThat(result[0].hGoals, Is(match.result?.extraTime?.goalsHomeTeam))
+        assertThat(result[0].aGoals, Is(match.result?.extraTime?.goalsAwayTeam))
     }
 
     @Test

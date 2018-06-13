@@ -13,10 +13,8 @@ class MatchScoreCalculator {
     }
 
     fun calculate(users: List<User>, predictedMatches: List<MatchPredictionResult>): List<User> {
-        predictedMatches.filter { it.hGoals != null &&
-                it.aGoals != null &&
-                it.hPredictedGoals != null &&
-                it.aPredictedGoals != null}
+        predictedMatches.filter { it.hGoals != null && it.aGoals != null &&
+                it.hPredictedGoals != null && it.aPredictedGoals != null}
                 .forEach {
             var matchScore = 0
 
