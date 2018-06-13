@@ -37,7 +37,7 @@ object Queries {
             "WHERE Prediction.userId = ?1"
 
     const val QUERY_GET_SCORE_AND_RANK = "SELECT u.id, " +
-            "DENSE_RANK() OVER (ORDER BY u.score DESC), " +
+            "RANK() OVER (ORDER BY u.score DESC), " +
             "u.score " +
             "FROM Users AS u"
 
@@ -45,7 +45,7 @@ object Queries {
             "  League.id as pin," +
             "  (SELECT rank" +
             "    FROM (" +
-            "          SELECT DENSE_RANK() OVER (ORDER BY score DESC) as rank," +
+            "          SELECT RANK() OVER (ORDER BY score DESC) as rank," +
             "            id as uId" +
             "            FROM Users" +
             "            INNER JOIN UserLeague u" +
@@ -61,7 +61,7 @@ object Queries {
             "  League.id as pin," +
             "  (SELECT rank" +
             "    FROM (" +
-            "          SELECT DENSE_RANK() OVER (ORDER BY score DESC) as rank," +
+            "          SELECT RANK() OVER (ORDER BY score DESC) as rank," +
             "            id as uId" +
             "            FROM Users" +
             "            INNER JOIN UserLeague u" +
@@ -81,7 +81,7 @@ object Queries {
             "    COUNT(*)" +
             "    OVER ()                 AS count," +
             "    score," +
-            "    DENSE_RANK()" +
+            "    RANK()" +
             "    OVER (" +
             "      ORDER BY score DESC ) AS rank" +
             "  FROM users" +
