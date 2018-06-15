@@ -19,6 +19,5 @@ fun HttpServletResponse.generateJwtToken(user: String, subject: String) {
             .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.toByteArray())
             .compact()
 
-    System.out.println("New JWT Generated: $token")
     this.addHeader(HEADER_STRING, TOKEN_PREFIX + token)
 }

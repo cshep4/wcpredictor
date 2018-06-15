@@ -128,7 +128,7 @@ internal class LeagueTableScoreCalculatorTest {
                 MatchPredictionResult(userId = 3, matchday = 3, hGoals = null, aGoals = null)
         )
 
-        val result = leagueTableScoreCalculator.calculate(users, predictedMatches)
+        leagueTableScoreCalculator.calculate(users, predictedMatches)
 
         verify(leagueTableService, times(0)).getCurrentStandings()
         verify(leagueTableService, times(0)).createGroupStandingsFromMatches(any())
