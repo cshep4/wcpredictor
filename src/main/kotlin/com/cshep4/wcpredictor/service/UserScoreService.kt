@@ -30,7 +30,9 @@ class UserScoreService {
         var users = userRepository.findAll().map { it.toDto() }
         users.forEach { it.score = 0 }
 
-        val predictedMatches = predictedMatchRepository.getAllMatchesWithPredictions().map { it.toDto() }
+        val predictedMatches = predictedMatchRepository.getAllMatchesWithPredictions()
+                .map { it.toDto() }
+                .distinctBy { Pair(it.userId, it.matchId) }
 
         if (!predictedMatches.none { it.hGoals != null && it.aGoals != null }) {
             users = leagueTableScoreCalculator.calculate(users, predictedMatches)

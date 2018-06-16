@@ -108,7 +108,7 @@ object Queries {
     const val QUERY_GET_ALL_MATCHES_WITH_PREDICTIONS = "SELECT prediction.id, prediction.userid," +
             "  match.hteam, match.ateam, match.hgoals, match.agoals," +
             "  prediction.hgoals as hPredictedGoals, prediction.agoals as aPredictedGoals," +
-            "  match.matchGroup as group, match.matchday" +
+            "  match.matchGroup as group, match.matchday, match.id as matchId" +
             " FROM match" +
             " INNER JOIN prediction" +
             " ON match.id = prediction.matchid" +

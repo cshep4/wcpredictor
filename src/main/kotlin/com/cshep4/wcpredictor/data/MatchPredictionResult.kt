@@ -10,10 +10,11 @@ data class MatchPredictionResult (
         var hPredictedGoals: Int? = null,
         var aPredictedGoals: Int? = null,
         var group: Char? = null,
-        var matchday: Int = 0
+        var matchday: Int = 0,
+        var matchId: Long = 0
 ) {
     fun toPredictedMatch(): Match = Match(
-            id = this.id,
+            id = this.matchId,
             hTeam = this.hTeam,
             aTeam = this.aTeam,
             hGoals = this.hPredictedGoals,

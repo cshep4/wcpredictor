@@ -16,7 +16,8 @@ data class MatchPredictionResultEntity (
         var hPredictedGoals: Int? = null,
         var aPredictedGoals: Int? = null,
         var group: Char? = null,
-        var matchday: Int = 0
+        var matchday: Int = 0,
+        var matchId: Long = 0
 ) {
     fun toDto(): MatchPredictionResult = MatchPredictionResult(
             id = this.id,
@@ -28,7 +29,8 @@ data class MatchPredictionResultEntity (
             hPredictedGoals = this.hPredictedGoals,
             aPredictedGoals = this.aPredictedGoals,
             group = this.group,
-            matchday = this.matchday)
+            matchday = this.matchday,
+            matchId = this.matchId)
 
     companion object {
         fun fromDto(dto: MatchPredictionResult) = MatchPredictionResultEntity(
@@ -41,6 +43,7 @@ data class MatchPredictionResultEntity (
                 hPredictedGoals = dto.hPredictedGoals,
                 aPredictedGoals = dto.aPredictedGoals,
                 group = dto.group,
-                matchday = dto.matchday)
+                matchday = dto.matchday,
+                matchId = dto.matchId)
     }
 }
