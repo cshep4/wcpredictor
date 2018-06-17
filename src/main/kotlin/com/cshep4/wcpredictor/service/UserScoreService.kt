@@ -8,6 +8,9 @@ import com.cshep4.wcpredictor.repository.PredictedMatchRepository
 import com.cshep4.wcpredictor.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
+
 
 @Service
 class UserScoreService {
@@ -26,6 +29,9 @@ class UserScoreService {
     @Autowired
     private lateinit var winnerScoreCalculator: WinnerScoreCalculator
 
+    @PersistenceContext
+    private lateinit var entityManager: EntityManager
+
     fun updateScores() {
         var users = userRepository.findAll().map { it.toDto() }
         users.forEach { it.score = 0 }
@@ -41,5 +47,7 @@ class UserScoreService {
         }
 
         userRepository.saveAll(users.map { UserEntity.fromDto(it) })
+
+        entityManager.clear()
     }
 }

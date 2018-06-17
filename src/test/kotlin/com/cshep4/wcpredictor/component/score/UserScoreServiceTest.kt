@@ -12,6 +12,7 @@ import org.junit.runner.RunWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import javax.persistence.EntityManager
 
 @RunWith(MockitoJUnitRunner::class)
 internal class UserScoreServiceTest {
@@ -29,6 +30,9 @@ internal class UserScoreServiceTest {
 
     @Mock
     private lateinit var winnerScoreCalculator: WinnerScoreCalculator
+
+    @Mock
+    private lateinit var entityManager: EntityManager
 
     @InjectMocks
     private lateinit var userScoreService: UserScoreService
@@ -53,6 +57,7 @@ internal class UserScoreServiceTest {
         verify(matchScoreCalculator).calculate(users, predictedMatches)
         verify(winnerScoreCalculator).calculate(users)
         verify(userRepository).saveAll(userEntities)
+        verify(entityManager).clear()
     }
 
 }
