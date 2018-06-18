@@ -55,7 +55,8 @@ object Queries {
             " FROM UserLeague" +
             " INNER JOIN League" +
             " ON League.id = UserLeague.leagueId" +
-            " WHERE userId = ?1"
+            " WHERE userId = ?1" +
+            " ORDER BY League.id"
 
     const val QUERY_GET_USERS_LEAGUE_OVERVIEW = "SELECT League.name as leagueName," +
             "  League.id as pin," +

@@ -106,4 +106,16 @@ internal class StandingsControllerTest {
         assertThat(result.statusCode, `is`(OK))
         assertThat(result.body, `is`(table))
     }
+
+    @Test
+    fun `'renameLeague' returns OK  when league is renamed`() {
+        val league = League()
+
+        whenever(standingsService.renameLeague(league)).thenReturn(league)
+
+        val result = standingsController.renameLeague(league)
+
+        assertThat(result.statusCode, `is`(OK))
+        assertThat(result.body, `is`(league))
+    }
 }

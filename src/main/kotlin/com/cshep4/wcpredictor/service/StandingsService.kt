@@ -1,7 +1,9 @@
 package com.cshep4.wcpredictor.service
 
 import com.cshep4.wcpredictor.data.*
+import com.cshep4.wcpredictor.entity.LeagueEntity
 import com.cshep4.wcpredictor.entity.UserLeagueEntity
+import com.cshep4.wcpredictor.repository.LeagueRepository
 import com.cshep4.wcpredictor.repository.LeagueTableRepository
 import com.cshep4.wcpredictor.repository.StandingsRepository
 import com.cshep4.wcpredictor.repository.UserLeagueRepository
@@ -43,6 +45,9 @@ class StandingsService {
 
     @Autowired
     private lateinit var leagueTableRepository: LeagueTableRepository
+
+    @Autowired
+    private lateinit var leagueRepository: LeagueRepository
 
     fun retrieveStandingsOverview(id: Long) : StandingsOverview {
         val userLeagues = getUsersLeagueList(id)
@@ -97,4 +102,6 @@ class StandingsService {
     fun retrieveOverallLeagueTable() : List<LeagueTableUser> = leagueTableRepository.getOverallLeagueTable()
             .sortedByDescending { it.score }
             .map { it.toDto() }
+
+    fun renameLeague(league: League) : League = leagueRepository.save(LeagueEntity.fromDto(league)).toDto()
 }

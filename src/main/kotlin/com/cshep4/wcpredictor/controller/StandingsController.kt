@@ -44,6 +44,13 @@ class StandingsController {
         return ResponseEntity.status(OK).build()
     }
 
+    @PutMapping("/rename")
+    fun renameLeague(@RequestBody league: League) : ResponseEntity<League> {
+        val updatedLeague = standingsService.renameLeague(league)
+
+        return ResponseEntity.status(OK).body(updatedLeague)
+    }
+
     @GetMapping("/league/{pin}")
     fun getLeagueTable(@PathVariable(value = "pin") pin: Long) : ResponseEntity<List<LeagueTableUser>> {
         val table = standingsService.retrieveLeagueTable(pin)

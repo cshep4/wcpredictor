@@ -1,7 +1,9 @@
 package com.cshep4.wcpredictor.service
 
 import com.cshep4.wcpredictor.data.*
+import com.cshep4.wcpredictor.entity.LeagueEntity
 import com.cshep4.wcpredictor.entity.LeagueTableUserEntity
+import com.cshep4.wcpredictor.repository.LeagueRepository
 import com.cshep4.wcpredictor.repository.LeagueTableRepository
 import com.cshep4.wcpredictor.repository.StandingsRepository
 import com.cshep4.wcpredictor.repository.UserLeagueRepository
@@ -51,6 +53,9 @@ internal class StandingsServiceTest {
 
     @Mock
     private lateinit var leagueTableRepository: LeagueTableRepository
+
+    @Mock
+    private lateinit var leagueRepository: LeagueRepository
 
     @InjectMocks
     private lateinit var standingsService: StandingsService
@@ -147,5 +152,18 @@ internal class StandingsServiceTest {
         val result = standingsService.retrieveOverallLeagueTable()
 
         assertThat(result, `is`(expectedResult))
+    }
+
+    @Test
+    fun `'renameLeague' saves the new league name and returns new object`() {
+        val league = League()
+        val leagueEntity = LeagueEntity.fromDto(league)
+
+        whenever(leagueRepository.save(leagueEntity)).thenReturn(leagueEntity)
+
+        val result = standingsService.renameLeague(league)
+
+        assertThat(result, `is`(league))
+        verify(leagueRepository).save(leagueEntity)
     }
 }
