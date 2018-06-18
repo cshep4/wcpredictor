@@ -41,7 +41,9 @@ class ResetPasswordService {
 
         val signature = userSignature.createUserSignature(caseInsensitiveEmail)
 
-        resetEmail.send(caseInsensitiveEmail, signature)
+        if (signature != null) {
+            resetEmail.send(caseInsensitiveEmail, signature)
+        }
     }
 
     fun resetPassword(resetPassword: ResetPassword): String {

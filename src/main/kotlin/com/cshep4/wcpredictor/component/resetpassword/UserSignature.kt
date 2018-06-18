@@ -14,15 +14,19 @@ class UserSignature {
     @Autowired
     private lateinit var userRepository: UserRepository
 
-    fun createUserSignature(email: String): String {
+    fun createUserSignature(email: String): String? {
         val signature = Jwts.builder()
                 .setIssuer(email)
                 .setExpiration(Date(System.currentTimeMillis() + PASSWORD_RESET_EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SECRET.toByteArray())
                 .compact()
 
-        userRepository.setUserSignature(signature, email)
+        val numberOfUpdatedRows = userRepository.setUserSignature(signature, email)
 
-        return signature
+        return if(numberOfUpdatedRows == 0) {
+            null
+        } else {
+            signature
+        }
     }
 }

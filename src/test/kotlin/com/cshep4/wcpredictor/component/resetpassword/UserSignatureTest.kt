@@ -3,7 +3,9 @@ package com.cshep4.wcpredictor.component.resetpassword
 import com.cshep4.wcpredictor.constant.SecurityConstants
 import com.cshep4.wcpredictor.constant.SecurityConstants.SECRET
 import com.cshep4.wcpredictor.repository.UserRepository
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.whenever
 import io.jsonwebtoken.Jwts
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -26,9 +28,11 @@ internal class UserSignatureTest {
     fun `'createUserSignature' should generate a token, valid for 24 hours with the users email as the issuer and store it to the db`() {
         val email = "this is a test email"
 
+        whenever(userRepository.setUserSignature(any(), any())).thenReturn(1)
+
         val result = userSignature.createUserSignature(email)
 
-        verify(userRepository).setUserSignature(result, email)
+        verify(userRepository).setUserSignature(result!!, email)
 
         val issuer = Jwts.parser()
                 .setSigningKey(SECRET.toByteArray())
