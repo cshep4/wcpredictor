@@ -3,8 +3,8 @@ package com.cshep4.wcpredictor.controller
 import com.cshep4.wcpredictor.data.Prediction
 import com.cshep4.wcpredictor.service.PredictionsService
 import com.nhaarman.mockito_kotlin.whenever
-import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,7 +40,7 @@ internal class PredictionsControllerTest {
         val result = predictionsController.updatePredictions(matches)
 
         assertThat(result.statusCode, `is`(BAD_REQUEST))
-        assertThat(result.body, `is`(CoreMatchers.nullValue()))
+        assertThat(result.body, `is`(nullValue()))
     }
 
     @Test
@@ -62,6 +62,28 @@ internal class PredictionsControllerTest {
         val result = predictionsController.getPredictionsByUserId(1)
 
         assertThat(result.statusCode, `is`(NOT_FOUND))
-        assertThat(result.body, `is`(CoreMatchers.nullValue()))
+        assertThat(result.body, `is`(nullValue()))
+    }
+
+    @Test
+    fun `'getPredictionsSummaryByUserId' returns list of users predictions in the request body when predictions are found`() {
+        val predictions = listOf(Prediction())
+
+        whenever(predictionsService.retrievePredictionsByUserId(1)).thenReturn(predictions)
+
+        val result = predictionsController.getPredictionsSummaryByUserId(1)
+
+        assertThat(result.statusCode, `is`(OK))
+        assertThat(result.body, `is`(predictions))
+    }
+
+    @Test
+    fun `'getPredictionsSummaryByUserId' returns NOT_FOUND when no predictions are found`() {
+        whenever(predictionsService.retrievePredictionsByUserId(1)).thenReturn(emptyList())
+
+        val result = predictionsController.getPredictionsSummaryByUserId(1)
+
+        assertThat(result.statusCode, `is`(NOT_FOUND))
+        assertThat(result.body, `is`(nullValue()))
     }
 }

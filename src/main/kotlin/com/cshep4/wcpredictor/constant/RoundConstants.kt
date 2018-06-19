@@ -13,4 +13,13 @@ object RoundConstants {
     const val SEMI_FINAL_MATCHDAY: Int = 6
     const val THIRD_PLACE_PLAY_OFF_MATCHDAY: Int = 7
     const val FINAL_MATCHDAY: Int = 8
+
+    const val A: Char = 'A'
+    const val B: Char = 'B'
+    const val C: Char = 'C'
+    const val D: Char = 'D'
+    const val E: Char = 'E'
+    const val F: Char = 'F'
+    const val G: Char = 'G'
+    const val H: Char = 'H'
 }

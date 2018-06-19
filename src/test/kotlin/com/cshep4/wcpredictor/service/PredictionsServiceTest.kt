@@ -1,7 +1,9 @@
 package com.cshep4.wcpredictor.service
 
+import com.cshep4.wcpredictor.component.prediction.CreatePredictionSummary
 import com.cshep4.wcpredictor.data.Match
 import com.cshep4.wcpredictor.data.Prediction
+import com.cshep4.wcpredictor.data.PredictionSummary
 import com.cshep4.wcpredictor.entity.PredictionEntity
 import com.cshep4.wcpredictor.repository.PredictionsRepository
 import com.nhaarman.mockito_kotlin.whenever
@@ -21,6 +23,9 @@ internal class PredictionsServiceTest {
 
     @Mock
     private lateinit var fixturesService: FixturesService
+
+    @Mock
+    private lateinit var createPredictionSummary: CreatePredictionSummary
 
     @InjectMocks
     private lateinit var predictionsService: PredictionsService
@@ -93,5 +98,22 @@ internal class PredictionsServiceTest {
         val result = predictionsService.retrievePredictionsByUserId(1)
 
         assertThat(result.isEmpty(), `is`(true))
+    }
+
+    @Test
+    fun `'retrievePredictionsSummaryByUserId' should retrieve all predictions for that user and return it in the correct format`() {
+        val predictionEntity = PredictionEntity()
+        val predictionEntities = listOf(predictionEntity)
+        val predictions = listOf(predictionEntity.toDto())
+        val matches = listOf(Match(id = 1, group = 'A'), Match(id = 2, group = 'B'), Match(id = 2, matchday = 4))
+        val predictionSummary = PredictionSummary()
+
+        whenever(fixturesService.retrieveAllMatches()).thenReturn(matches)
+        whenever(predictionsRepository.findByUserId(1)).thenReturn(predictionEntities)
+        whenever(createPredictionSummary.format(matches, predictions)).thenReturn(predictionSummary)
+
+        val result = predictionsService.retrievePredictionsSummaryByUserId(1)
+
+        assertThat(result, `is`(predictionSummary))
     }
 }

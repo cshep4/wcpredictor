@@ -1,6 +1,7 @@
 package com.cshep4.wcpredictor.controller
 
 import com.cshep4.wcpredictor.data.Prediction
+import com.cshep4.wcpredictor.data.PredictionSummary
 import com.cshep4.wcpredictor.service.PredictionsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -30,5 +31,12 @@ class PredictionsController {
             predictions.isEmpty() -> ResponseEntity.notFound().build()
             else -> ResponseEntity.ok(predictions)
         }
+    }
+
+    @GetMapping("/summary/{id}")
+    fun getPredictionsSummaryByUserId(@PathVariable(value = "id") id: Long) : ResponseEntity<PredictionSummary> {
+        val predictions = predictionsService.retrievePredictionsSummaryByUserId(id)
+
+        return ResponseEntity.ok(predictions)
     }
 }
