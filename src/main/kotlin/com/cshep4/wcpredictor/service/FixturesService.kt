@@ -1,6 +1,7 @@
 package com.cshep4.wcpredictor.service
 
 import com.cshep4.wcpredictor.component.fixtures.FixtureFormatter
+import com.cshep4.wcpredictor.component.fixtures.FixturesByDate
 import com.cshep4.wcpredictor.component.fixtures.OverrideMatchScore
 import com.cshep4.wcpredictor.component.fixtures.PredictionMerger
 import com.cshep4.wcpredictor.constant.APIConstants.API_KEY
@@ -13,6 +14,9 @@ import com.cshep4.wcpredictor.service.fixtures.FixturesApiService
 import com.cshep4.wcpredictor.service.fixtures.UpdateFixturesService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Service
 class FixturesService {
@@ -40,6 +44,9 @@ class FixturesService {
     @Autowired
     private lateinit var overrideMatchScore: OverrideMatchScore
 
+    @Autowired
+    private lateinit var fixturesByDate: FixturesByDate
+
     fun update(): List<Match> {
         val apiResult = fixtureApiService.retrieveFixtures(API_URL, HEADER_KEY, API_KEY) ?: return emptyList()
 
@@ -66,5 +73,15 @@ class FixturesService {
         val predictions = predictionsService.retrievePredictionsByUserId(id)
 
         return predictionMerger.merge(matches, predictions)
+    }
+
+    fun retrieveAllUpcomingFixtures() : Map<LocalDate, List<Match>> {
+        val upcomingMatches = retrieveAllMatches().filter { it.dateTime!!.isAfter(LocalDateTime.now(Clock.systemUTC())) }
+
+        return if (upcomingMatches.isEmpty()) {
+            emptyMap()
+        } else {
+            fixturesByDate.format(upcomingMatches)
+        }
     }
 }

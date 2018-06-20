@@ -1,6 +1,7 @@
 package com.cshep4.wcpredictor.controller
 
 import com.cshep4.wcpredictor.data.Prediction
+import com.cshep4.wcpredictor.data.PredictionSummary
 import com.cshep4.wcpredictor.service.PredictionsService
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.`is`
@@ -67,23 +68,13 @@ internal class PredictionsControllerTest {
 
     @Test
     fun `'getPredictionsSummaryByUserId' returns list of users predictions in the request body when predictions are found`() {
-        val predictions = listOf(Prediction())
+        val predictions = PredictionSummary()
 
-        whenever(predictionsService.retrievePredictionsByUserId(1)).thenReturn(predictions)
+        whenever(predictionsService.retrievePredictionsSummaryByUserId(1)).thenReturn(predictions)
 
         val result = predictionsController.getPredictionsSummaryByUserId(1)
 
         assertThat(result.statusCode, `is`(OK))
         assertThat(result.body, `is`(predictions))
-    }
-
-    @Test
-    fun `'getPredictionsSummaryByUserId' returns NOT_FOUND when no predictions are found`() {
-        whenever(predictionsService.retrievePredictionsByUserId(1)).thenReturn(emptyList())
-
-        val result = predictionsController.getPredictionsSummaryByUserId(1)
-
-        assertThat(result.statusCode, `is`(NOT_FOUND))
-        assertThat(result.body, `is`(nullValue()))
     }
 }

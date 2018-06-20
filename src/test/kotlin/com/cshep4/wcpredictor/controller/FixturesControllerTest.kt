@@ -16,6 +16,7 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.springframework.http.HttpStatus.*
+import java.time.LocalDate
 import org.hamcrest.CoreMatchers.`is` as Is
 
 @RunWith(MockitoJUnitRunner::class)
@@ -94,6 +95,20 @@ internal class FixturesControllerTest {
 
         assertThat(result.statusCode, Is(NOT_FOUND))
         assertThat(result.body, Is(nullValue()))
+    }
+
+    @Test
+    fun `'getUpcomingFixtures' should get upcoming fixtures and return with OK`() {
+        val upcomingFixtures = mapOf(
+                Pair(LocalDate.now(), listOf(Match()))
+        )
+
+        whenever(fixturesService.retrieveAllUpcomingFixtures()).thenReturn(upcomingFixtures)
+
+        val result = fixturesController.getUpcomingFixtures()
+
+        assertThat(result.statusCode, Is(OK))
+        assertThat(result.body, Is(upcomingFixtures))
     }
 
 

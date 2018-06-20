@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 
 @RestController
 @RequestMapping("/fixtures")
@@ -52,5 +53,12 @@ class FixturesController {
             matches.isEmpty() -> ResponseEntity.notFound().build()
             else -> ResponseEntity.ok(matches)
         }
+    }
+
+    @GetMapping("/upcoming")
+    fun getUpcomingFixtures() : ResponseEntity<Map<LocalDate, List<Match>>> {
+        val fixtures = fixturesService.retrieveAllUpcomingFixtures()
+
+        return ResponseEntity.ok(fixtures)
     }
 }
