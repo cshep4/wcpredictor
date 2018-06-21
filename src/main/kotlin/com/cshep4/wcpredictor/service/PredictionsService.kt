@@ -43,7 +43,7 @@ class PredictionsService {
     fun retrievePredictionsByUserId(id: Long) : List<Prediction> = predictionsRepository.findByUserId(id).map { it.toDto() }
 
     fun retrievePredictionsSummaryByUserId(id: Long) : PredictionSummary {
-        val matches = fixturesService.retrieveAllMatches()
+        val matches = fixturesService.retrieveAllMatches().filter { it.dateTime!!.isBefore(LocalDateTime.now(Clock.systemUTC())) }
         val predictions = retrievePredictionsByUserId(id)
 
         return createPredictionSummary.format(matches, predictions)

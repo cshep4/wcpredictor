@@ -105,7 +105,8 @@ internal class PredictionsServiceTest {
         val predictionEntity = PredictionEntity()
         val predictionEntities = listOf(predictionEntity)
         val predictions = listOf(predictionEntity.toDto())
-        val matches = listOf(Match(id = 1, group = 'A'), Match(id = 2, group = 'B'), Match(id = 2, matchday = 4))
+        val dateTime = LocalDateTime.now().minusDays(1)
+        val matches = listOf(Match(id = 1, group = 'A', dateTime = dateTime), Match(id = 2, group = 'B', dateTime = dateTime), Match(id = 2, matchday = 4, dateTime = dateTime))
         val predictionSummary = PredictionSummary()
 
         whenever(fixturesService.retrieveAllMatches()).thenReturn(matches)
