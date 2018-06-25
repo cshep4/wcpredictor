@@ -48,15 +48,19 @@ class FixturesService {
     private lateinit var fixturesByDate: FixturesByDate
 
     fun update(): List<Match> {
-        val apiResult = fixtureApiService.retrieveFixtures(API_URL, HEADER_KEY, API_KEY) ?: return emptyList()
-
-        val matches = fixtureFormatter.format(apiResult)
+        val matches = retrieveMatchesFromApi() ?: return emptyList()
 
         val overrides = overrideMatchService.retrieveAllOverriddenMatches()
 
         val finalScores = overrideMatchScore.update(matches, overrides)
 
         return updateFixturesService.update(finalScores)
+    }
+
+    fun retrieveMatchesFromApi() : List<Match>? {
+        val apiResult = fixtureApiService.retrieveFixtures(API_URL, HEADER_KEY, API_KEY) ?: return null
+
+        return fixtureFormatter.format(apiResult)
     }
 
     fun retrieveAllMatches() : List<Match> = fixturesRepository.findAll().map { it.toDto() }

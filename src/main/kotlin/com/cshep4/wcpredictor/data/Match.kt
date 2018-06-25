@@ -23,4 +23,18 @@ data class Match (
             group = this.group,
             dateTime = this.dateTime,
             matchday = this.matchday)
+
+    fun toMatchWithOverride(override: OverrideMatch): MatchWithOverride = MatchWithOverride(
+            id = this.id,
+            hTeam = this.hTeam,
+            aTeam = this.aTeam,
+            hGoals = this.hGoals,
+            aGoals = this.aGoals,
+            hOverride = override.hGoals,
+            aOverride = override.aGoals,
+            played = this.played,
+            group = this.group,
+            dateTime = this.dateTime,
+            matchday = this.matchday
+    )
 }

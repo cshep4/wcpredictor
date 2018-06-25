@@ -16,11 +16,11 @@ class LeagueTableScoreCalculator {
     private lateinit var leagueTableService: LeagueTableService
 
     fun calculate(users: List<User>, predictedMatches: List<MatchPredictionResult>): List<User> {
-        if (isGroupStageFinished(predictedMatches)) {
+//        if (isGroupStageFinished(predictedMatches)) {
             val standings = leagueTableService.getCurrentStandings()
 
             users.forEach { updateScore(it, standings, predictedMatches) }
-        }
+//        }
 
         return users
     }
@@ -60,5 +60,5 @@ class LeagueTableScoreCalculator {
     }
 
     private fun isTablePositionCorrect(predictedTableTeam: TableTeam, standings: Standings, i: Int, j: Int) =
-            predictedTableTeam.teamName == standings.standings[i].table[j].teamName
+            predictedTableTeam.teamName == standings.standings[i].table[j].teamName && standings.standings[i].table[j].played == 3
 }
