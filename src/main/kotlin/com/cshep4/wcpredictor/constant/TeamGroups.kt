@@ -40,5 +40,5 @@ object TeamGroups {
             "Japan" to 'H'
     )
 
-    val fairPlay = listOf("Japan")
+    val fairPlay = listOf("Japan", "England")
 }
