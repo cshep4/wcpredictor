@@ -39,4 +39,6 @@ object TeamGroups {
             "Colombia" to 'H',
             "Japan" to 'H'
     )
+
+    val fairPlay = listOf("Japan")
 }

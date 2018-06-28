@@ -1,5 +1,6 @@
 package com.cshep4.wcpredictor.component.leaguetable
 
+import com.cshep4.wcpredictor.constant.TeamGroups.fairPlay
 import com.cshep4.wcpredictor.data.LeagueTable
 import com.cshep4.wcpredictor.data.Match
 import com.cshep4.wcpredictor.data.TableTeam
@@ -14,11 +15,25 @@ class LeagueTableCalculator {
         matches.filter { it.hGoals != null && it.aGoals != null }
                 .forEach { updateTableForMatch(it, leagueTable) }
 
+        setFairPlayOverride(leagueTable)
+
         sortTables(leagueTable)
 
         updateRank(leagueTable)
 
         return leagueTable
+    }
+
+    private fun setFairPlayOverride(leagueTable: MutableList<LeagueTable>) {
+        leagueTable.forEach {
+            it.table.forEach {
+                it.fairPlay = if (fairPlay.contains(it.teamName)) {
+                    1
+                } else {
+                    0
+                }
+            }
+        }
     }
 
     private fun updateRank(leagueTable: MutableList<LeagueTable>) {
@@ -33,7 +48,8 @@ class LeagueTableCalculator {
             it.table = ArrayList(it.table).sortedWith(
                     compareByDescending<TableTeam>{it.points}
                     .thenByDescending { it.goalDifference }
-                    .thenByDescending { it.goalsFor })
+                    .thenByDescending { it.goalsFor }
+                    .thenByDescending { it.fairPlay })
                     .toMutableList()
         }
     }
